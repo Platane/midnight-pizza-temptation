@@ -19,8 +19,9 @@ const addFile = (name, base) => {
 addFile('./dist')
 
 zip.generateAsync({
-    type:'nodebuffer',
-    platform:process.platform
+    type        : 'nodebuffer',
+    platform    : process.platform,
+    compression : 'DEFLATE',
 })
 
     .then( content => fs.writeFileSync('./dist/res.zip', content) )
