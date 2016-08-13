@@ -9,7 +9,8 @@ const network = {
         { x: 250, y: 250 },
     ],
     arcs     : [
-        ...Array.from({ length: n }, (_,i) => ({ a: n, b:i }) )
+        ...Array.from({ length: n }, (_,i) => ({ a: n, b:i }) ),
+        ...Array.from({ length: n }, (_,i) => ({ b: n, a:i }) ),
     ],
 }
 
@@ -24,17 +25,16 @@ const carriers = [
 ]
 
 
-let s = true
 const loop = () => {
 
-    carriers[ 0 ].position.k += s ? 0.01 : -0.01
+    carriers[ 0 ].position.k += 0.01
 
-    if ( carriers[ 0 ].position.k <=0 )
-        s = true
-
-    else if ( carriers[ 0 ].position.k >=1 )
-        s = false
-
+    if ( carriers[ 0 ].position.k >=1 ) {
+        carriers[ 0 ].position.k= 0
+        carriers[ 0 ].position.arc = carriers[ 0 ].position.arc == 1
+            ? n+1
+            : 1
+    }
 
     clear()
     drawNetwork( network )
