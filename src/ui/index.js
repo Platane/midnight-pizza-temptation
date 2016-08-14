@@ -3,6 +3,10 @@ const ctx = document.getElementById('app').getContext('2d')
 import point    from 'math/point'
 
 const marge = 4
+const node_r = 8
+const arrow_h = 4
+const arrow_l = 6
+const arrow_d = 5
 const drawNetwork = ({ nodes, arcs }) => {
 
     arcs.forEach( x => {
@@ -11,11 +15,19 @@ const drawNetwork = ({ nodes, arcs }) => {
         const l = point.length( n )
 
         ctx.save()
-        ctx.strokeStyle = '#aaa'
+        ctx.fillStyle = ctx.strokeStyle = '#ccc'
+
         ctx.beginPath()
-        ctx.moveTo( nodes[ x.a ].x + n.y/l*marge, nodes[ x.a ].y - n.x/l*marge )
-        ctx.lineTo( nodes[ x.b ].x + n.y/l*marge, nodes[ x.b ].y - n.x/l*marge )
+        ctx.moveTo( nodes[ x.a ].x + n.y/l*marge + n.x/l*node_r, nodes[ x.a ].y - n.x/l*marge + n.y/l*node_r )
+        ctx.lineTo( nodes[ x.b ].x + n.y/l*marge - n.x/l*node_r, nodes[ x.b ].y - n.x/l*marge - n.y/l*node_r )
         ctx.stroke()
+
+        ctx.beginPath()
+        ctx.moveTo( nodes[ x.b ].x + n.y/l*marge - n.x/l*(node_r+arrow_d), nodes[ x.b ].y - n.x/l*marge - n.y/l*(node_r+arrow_d) )
+        ctx.lineTo( nodes[ x.b ].x + n.y/l*(marge+arrow_h) - n.x/l*(node_r+arrow_l+arrow_d), nodes[ x.b ].y - n.x/l*(marge+arrow_h) - n.y/l*(node_r+arrow_l+arrow_d) )
+        ctx.lineTo( nodes[ x.b ].x + n.y/l*(marge-arrow_h) - n.x/l*(node_r+arrow_l+arrow_d), nodes[ x.b ].y - n.x/l*(marge-arrow_h) - n.y/l*(node_r+arrow_l+arrow_d) )
+        ctx.fill()
+
         ctx.restore()
 
     })
@@ -23,9 +35,9 @@ const drawNetwork = ({ nodes, arcs }) => {
     nodes.forEach( u => {
 
         ctx.save()
-        ctx.strokeStyle = '#888'
+        ctx.strokeStyle = '#ccc'
         ctx.beginPath()
-        ctx.arc( u.x, u.y, 6, 0, Math.PI*2 )
+        ctx.arc( u.x, u.y, node_r, 0, Math.PI*2 )
         ctx.stroke()
         ctx.restore()
 
