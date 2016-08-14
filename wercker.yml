@@ -12,9 +12,6 @@ build:
 
 deploy:
     steps:
-        - leipert/git-push:
-            gh_oauth: $GH_TOKEN
-            gh_pages: true
-            discard_history: true
-            clean_removed_files: true
+        - takuma7/gh-pages:
+            token: $GH_TOKEN
             basedir: dist
