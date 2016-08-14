@@ -29,11 +29,6 @@ module.exports = {
             },
 
             {
-                test: /\.css$/,
-                loader: 'style!css?modules&importLoaders=1&localIdentName=[hash:base64:6]!postcss',
-            },
-
-            {
                 test: /\.json$/,
                 loader: 'file?name='+(process.env.PATHNAME||'/')+'[hash:3].[ext]',
             },

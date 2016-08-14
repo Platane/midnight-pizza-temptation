@@ -6,16 +6,11 @@
 
     "devDependencies" : {
         "jszip": "^3.1.1",
-        "mocha": "^3.0.0",
         "webpack" : "1.x",
         "webpack-dev-server" : "1.x",
         "html-minify-loader" : "^1.1.0",
         "file-loader" : "^0.9.0",
-        "style-loader" : "0.13.x",
-        "css-loader" : "0.23.x",
         "html-loader" : "0.4.x",
-        "postcss-loader" : "^0.9.0",
-        "autoprefixer" : "^6.3.6",
         "babel-loader" : "6.x",
         "babel-core" : "6.x",
         "babel-cli" : "6.x",
