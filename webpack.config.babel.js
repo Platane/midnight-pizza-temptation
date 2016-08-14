@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
-const autoprefixer = require('autoprefixer')
 
 module.exports = {
 
@@ -39,10 +38,6 @@ module.exports = {
             },
 
         ],
-
-        postcss: () =>
-            [autoprefixer]
-        ,
     },
 
     plugins: [
