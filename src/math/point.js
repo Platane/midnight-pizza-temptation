@@ -12,6 +12,9 @@ const sqrt_length = a =>
 const length = a =>
     Math.sqrt( sqrt_length( a ) )
 
+const distance = ( a, b ) =>
+    length( sub( a, b ) )
+
 module.exports = {
 
     sub,
@@ -19,6 +22,8 @@ module.exports = {
     sqrt_length,
 
     length,
+
+    distance,
 
     // return    a * ( 1-k ) + b * k
     //   =>  k == 0   =>   x == a
