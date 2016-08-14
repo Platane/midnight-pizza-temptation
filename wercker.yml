@@ -12,6 +12,6 @@ build:
 
 deploy:
     steps:
-        - takuma7/gh-pages:
+        - lvivier/gh-pages:
             token: $GH_TOKEN
             basedir: dist
