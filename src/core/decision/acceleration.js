@@ -1,38 +1,56 @@
 
-const inCrossing = ( network, carrier ) =>
-    carrier.position.k * network.arcs[ carrier.position.arc ].length > 20
 
 
-
-const getCarrierAhead = ( network, carriers, me ) => {
-
-    let ahead
-
+// return the list on carrier on this arc
+const getCarriersOnArc = ( network, carriers, arc ) =>
     carriers
-        .filter( c =>
+        .filter( x => x.position.arc == arc )
 
-            c != me
-            &&
+const intersectionLimit = 50
 
-            // on the same arc
-            c.position.arc == me.position.arc
-            &&
+// if the carrier is in a node, return this node
+const carrierInNode = ( network, carrier ) => {
 
-            // ahead
-            c.position.k > me.position.k
-        )
-        .forEach( c =>
+    const arc = network.arcs[ carrier.position.arc ]
 
-            !ahead || ahead.position.k > c.position.k
-                ? ahead = c
-                : null
-        )
+    if( carrier.position.k * arc.length < intersectionLimit )
+        return arc.a
 
-    return ahead
+    if( (1-carrier.position.k) * arc.length < intersectionLimit )
+        return arc.b
+
+    return null
 }
 
+// return all the carriers that are in the intersection ( = inside the intersectionLimit radius )
+// whether they are leaving or entering
+const getCarriersInNode = ( network, carriers, node ) =>
 
-const computeAcceleration = ( network, carriers, me ) => {
+    carriers
+        .filter( carrier => carrierInNode( network, carrier ) == node  )
+
+
+const getCarrierAhead = ( network, carriers, me ) =>
+
+    getCarriersOnArc( network, carriers, me.position.arc )
+        .filter( carrier =>
+            // not the same as me, and ahead
+            carrier != me && carrier.position.k > me.position.k
+        )
+        .reduce( (ahead, carrier) =>
+
+            !ahead || ahead.position.k > carrier.position.k
+                ? carrier
+                : ahead
+        ,null)
+
+
+const computeAccelerationAroundNode = ( network, carriers, me, node ) => {
+
+    return 0
+}
+
+const computeAccelerationOnArc = ( network, carriers, me ) => {
 
     const carrierAhead = getCarrierAhead( network, carriers, me )
 
@@ -48,6 +66,15 @@ const computeAcceleration = ( network, carriers, me ) => {
 
     else
         return 0
+}
+
+const computeAcceleration = ( network, carriers, me ) => {
+
+    const node = carrierInNode( network, me )
+
+    return node === null || getCarrierAhead( network, carriers, me )
+        ? computeAccelerationOnArc( network, carriers, me )
+        : computeAccelerationAroundNode( network, carriers, me, node )
 }
 
 module.exports = { computeAcceleration }

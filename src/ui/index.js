@@ -2,8 +2,8 @@ const ctx = document.getElementById('app').getContext('2d')
 
 import point    from 'math/point'
 
-const marge = 4
-const node_r = 12
+const marge = 3
+const node_r = 18
 const arrow_h = 4
 const arrow_l = 6
 const arrow_d = 5

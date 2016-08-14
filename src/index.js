@@ -1,7 +1,7 @@
 require('file?name=index.html!./index.html')
 
 import { drawNetwork, drawCarriers, clear }         from './ui'
-import { network }                                  from 'sample/star'
+import { network }                                  from 'sample/y'
 import { step }                                     from 'core/runner'
 import { prepare as prepareNetwork }                from 'math/graph'
 
@@ -14,12 +14,12 @@ const info = {
     maxVelocity : 3,            // px . frame^-1
 }
 
-const carriers = Array.from({ length: 10 })
+const carriers = Array.from({ length: 2 })
     .map((_,i) =>
         ({
             position : {
-                arc         : i % network.arcs.length,
-                k           : Math.random(),
+                arc         : i % 2,
+                k           : 0.2,
                 velocity    : 0,
             },
             decision : {
@@ -28,8 +28,9 @@ const carriers = Array.from({ length: 10 })
             },
             info : {
                 ...info,
-                maxVelocity : Math.random() + 1,
+                maxVelocity : 1.2,
             },
+            index : i,
         })
     )
 
