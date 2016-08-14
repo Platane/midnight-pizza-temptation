@@ -3,7 +3,7 @@ const ctx = document.getElementById('app').getContext('2d')
 import point    from 'math/point'
 
 const marge = 4
-const node_r = 8
+const node_r = 12
 const arrow_h = 4
 const arrow_l = 6
 const arrow_d = 5
@@ -59,10 +59,10 @@ const drawCarriers = ( network, carriers ) =>
             const p = point.lerp( a, b, carrier.position.k )
 
             ctx.save()
-            ctx.strokeStyle = `hsl(${ ( i * 137 + i*i*37 ) % 260 }, 50%, 50%)`
+            ctx.fillStyle = `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
             ctx.beginPath()
             ctx.arc( p.x + n.y/l*marge, p.y - n.x/l*marge, 4, 0, Math.PI*2 )
-            ctx.stroke()
+            ctx.fill()
             ctx.restore()
         })
 
