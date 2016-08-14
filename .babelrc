@@ -2,6 +2,7 @@
     "presets" : [ "es2015" ],
 
     "plugins": [
+        [ "./script/babel-plugin-require-absolute.js", { "moduleDirectory": ["src"] } ],
         "babel-plugin-transform-es2015-modules-commonjs",
         "babel-plugin-transform-export-extensions",
         "babel-plugin-transform-object-rest-spread",
