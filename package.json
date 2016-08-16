@@ -5,11 +5,17 @@
     "dependencies": {},
 
     "devDependencies" : {
+        "expect": "^1.8.0",
+        "jquery": "^3.1.0",
+        "mocha": "^3.0.0",
         "jszip": "^3.1.1",
         "webpack" : "1.x",
         "webpack-dev-server" : "1.x",
         "html-minify-loader" : "^1.1.0",
         "file-loader" : "^0.9.0",
+        "style-loader" : "0.13.x",
+        "css-loader" : "0.23.x",
+        "raw-loader" : "^0.5.1",
         "html-loader" : "0.4.x",
         "babel-loader" : "6.x",
         "babel-core" : "6.x",
@@ -22,6 +28,8 @@
 
         "start"             : "webpack-dev-server --port 9002 --content-base ./ -d",
 
-        "build"             : "rm -r -f -d dist/ && env NODE_ENV=production webpack && node ./script/inlineJs && rm ./dist/index.js && sleep 1 && node ./script/zip"
+        "build"             : "rm -r -f -d dist/ && env NODE_ENV=production webpack && node ./script/inlineJs && rm ./dist/index.js && sleep 1 && node ./script/zip",
+
+        "test"              : "mocha --compilers js:babel-register  --timeout 200 ./src/test/spec/index.js"
     }
 }

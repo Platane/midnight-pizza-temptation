@@ -5,7 +5,16 @@ const webpack = require('webpack')
 module.exports = {
 
     entry: {
-        'index'       : './src/index.js'
+        'index'       : './src/index.js',
+
+        ...(
+            process.env.NODE_ENV == 'production'
+                ? {}
+                : {
+                    'test-spec'   : './src/test/spec/index.js',
+                    'test-init'   : './src/test/runner/index.js',
+                }
+        )
     },
 
     output: {
@@ -19,6 +28,11 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel',
+            },
+
+            {
+                test: /\.css$/,
+                loader: 'style!css',
             },
 
             {

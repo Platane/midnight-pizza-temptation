@@ -7,6 +7,10 @@ build:
             code: env NODE_ENV=dev npm install --quiet && npm list --depth 0  --quiet
 
         - script:
+            name: test
+            code: npm test
+
+        - script:
             name: build
             code: npm run build
 
