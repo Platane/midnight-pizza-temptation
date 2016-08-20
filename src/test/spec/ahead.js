@@ -2,7 +2,6 @@
 
 import {getCarrierAheadCarrier}         from 'core/util/ahead'
 import {build}                          from 'math/graph/build'
-import * as sampleY                     from 'sample/y'
 import expect                           from 'expect'
 
 describe('ahead', function(){
