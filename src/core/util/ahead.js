@@ -21,6 +21,9 @@ const on_same = ( carriers, arc, l ) =>
 // take account of the node priority
 const on_entering = ( carriers, arc, next_arc, l ) => {
 
+    if ( l > 30 )
+        return []
+
     const incomingArcs = next_arc
         ? arc.node_b.exchanges
             .find( x => x.arc_a == arc && x.arc_b == next_arc )
@@ -50,7 +53,7 @@ const on_entering = ( carriers, arc, next_arc, l ) => {
 
                         // TODO some consideration of the other carrier velocity ?
 
-                        return l_ < 50 && { carrier, distance: l_ < l ? l - l_ : 0 }
+                        return l_ < 30 && { carrier, distance: l_ < l ? l - l_ : 0 }
 
                     })
                     .filter( x => x )
