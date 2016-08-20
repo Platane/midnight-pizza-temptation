@@ -16,10 +16,9 @@ const step = ( network, carriers ) =>
                     choseNewRoute( network, carrier )
 
                 // next arc
-                const nextArc = carrier.decision.path.shift()
-                carrier.position.arc    = network.nodes[ network.arcs[ carrier.position.arc ].b ].leaving
-                    .find( arc => arc.b == nextArc )
-                    .index
+                const next_node = carrier.decision.path.shift()
+                carrier.position.arc    = carrier.position.arc.node_b.arcs_leaving
+                    .find( arc => arc.node_b == next_node )
 
                 carrier.position.k      = 0
             }
@@ -27,12 +26,12 @@ const step = ( network, carriers ) =>
             // compute the acceleration
             carrier.position.velocity = Math.max(0,
                 Math.min( carrier.info.maxVelocity,
-                    carrier.position.velocity + computeAcceleration( network, carriers, carrier )
+                    carrier.position.velocity + computeAcceleration( carriers, carrier )
                 )
             )
 
             // move the carrier
-            carrier.position.k += carrier.position.velocity / network.arcs[ carrier.position.arc ].length
+            carrier.position.k += carrier.position.velocity / carrier.position.arc.length
         })
 
 

@@ -1,7 +1,7 @@
 
 
 import {getCarrierAheadCarrier}         from 'core/util/ahead'
-import {prepare as prepareNetwork}      from 'math/graph'
+import {build}                          from 'math/graph/build'
 import * as sampleY                     from 'sample/y'
 import expect                           from 'expect'
 
@@ -9,155 +9,108 @@ describe('ahead', function(){
 
     beforeEach(function(){
 
-        this.network = sampleY.network
-
-        prepareNetwork( this.network )
-
-    })
-
-    describe('carrier ahead on arc', function(){
-
-        beforeEach(function(){
-            this.carriers = [
-                {
-                    position    : { arc : 0, k : 0.2 },
-                    decision    : { path : [3,2,0] },
-                    index       : 0,
-                },
-                {
-                    position    : { arc : 0, k : 0.5 },
-                    decision    : { path : [3,2,0] },
-                    index       : 1,
-                },
-            ]
-        })
-
-        it('should get the carrier ahead',function(){
-
-            const res = getCarrierAheadCarrier( this.network, this.carriers, this.carriers[0] )
-
-            expect( res )
-                .toExist()
-                .toContainKey( 'distance' )
-
-            expect( res.carrier ).toBe( this.carriers[1] )
-        })
+        this.network = build([
+            { x:50 , y:50 , links: [3]   },
+            { x:750, y:50 , links: [3]   },
+            { x:400, y:450, links: [0,1] },
+            { x:400, y:50 , links: [2]   },
+        ])
 
     })
 
-    describe('carrier ahead on next arc', function(){
+    it('with carrier ahead on same arc', function(){
 
-        beforeEach(function(){
-            this.carriers = [
-                {
-                    position    : { arc : 0, k : 0.86 },
-                    decision    : { path : [3,2,0] },
-                    index       : 0,
-                },
-                {
-                    position    : { arc : 2, k : 0.4 },
-                    decision    : { path : [2,0] },
-                    index       : 1,
-                },
-            ]
-        })
+        const { arcs, nodes } = this.network
 
-        it('should get the carrier ahead',function(){
+        const carriers = [
+            {
+                position    : { arc     : arcs[0], k : 0.2 },
+                decision    : { path    : [] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs[0], k : 0.5 },
+                decision    : { path    : [] },
+                index       : 1,
+            },
+        ]
 
-            const res = getCarrierAheadCarrier( this.network, this.carriers, this.carriers[0] )
+        const res = getCarrierAheadCarrier( carriers, carriers[0] )
 
-            expect( res )
-                .toExist()
-                .toContainKey( 'distance' )
-
-            expect( res.carrier ).toBe( this.carriers[1] )
-        })
-
+        expect( res && res.carrier ).toBe( carriers[1] )
     })
 
-    describe('carrier ahead, just leaving the next node for a different path', function(){
 
-        beforeEach(function(){
-            this.carriers = [
-                {
-                    position    : { arc : 2, k : 0.9 },
-                    decision    : { path : [2,0] },
-                    index       : 0,
-                },
-                {
-                    position    : { arc : 3, k : 0.005 },
-                    decision    : { path : [1] },
-                    index       : 1,
-                },
-            ]
-        })
+    it('with carrier ahead on next arc', function(){
 
-        it('should get the carrier ahead',function(){
+        const { arcs, nodes } = this.network
 
-            const res = getCarrierAheadCarrier( this.network, this.carriers, this.carriers[0] )
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_b.index == 0 ), k : 0.8 },
+                decision    : { path    : [ nodes[3] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.5 },
+                decision    : { path    : [ ] },
+                index       : 1,
+            },
+        ]
 
-            expect( res )
-                .toExist()
-                .toContainKey( 'distance' )
+        const res = getCarrierAheadCarrier( carriers, carriers[0] )
 
-            expect( res.carrier ).toBe( this.carriers[1] )
-        })
+        expect( res && res.carrier ).toBe( carriers[1] )
     })
 
-    describe('carrier on a different arc, will arrive at the same time on the node by a prior path' , function(){
 
-        beforeEach(function(){
-            this.carriers = [
-                {
-                    position    : { arc : 0, k : 0.92 },
-                    decision    : { path : [3,2,0] },
-                    index       : 0,
-                },
-                {
-                    position    : { arc : 1, k : 0.92 },
-                    decision    : { path : [3,2,0] },
-                    index       : 1,
-                },
-            ]
-        })
+    it('with carrier ahead inside the intersection, leaving not on the next arc', function(){
 
-        it('should get the carrier ahead',function(){
+        const { arcs, nodes } = this.network
 
-            const res = getCarrierAheadCarrier( this.network, this.carriers, this.carriers[0] )
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 3 ), k : 0.6 },
+                decision    : { path    : [ nodes[0] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_b.index == 1 ), k : 0.01 },
+                decision    : { path    : [ nodes[3] ] },
+                index       : 1,
+            },
+        ]
 
-            expect( res )
-                .toExist()
-                .toContainKey( 'distance' )
+        const res = getCarrierAheadCarrier( carriers, carriers[0] )
 
-            expect( res.carrier ).toBe( this.carriers[1] )
-        })
-
+        expect( res && res.carrier ).toBe( carriers[1] )
     })
 
-    describe('carrier on a different arc, will arrive at the same time on the node by a less prior path' , function(){
+    it('with carrier ahead inside the intersection, entering from a prior road', function(){
 
-        beforeEach(function(){
-            this.carriers = [
-                {
-                    position    : { arc : 1, k : 0.92 },
-                    decision    : { path : [3,2,0] },
-                    index       : 0,
-                },
-                {
-                    position    : { arc : 0, k : 0.92 },
-                    decision    : { path : [3,2,0] },
-                    index       : 1,
-                },
-            ]
-        })
+        const { arcs, nodes } = this.network
 
-        it('should get the carrier ahead',function(){
+        const e0 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 0 )
+        const e1 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 1 )
 
-            const res = getCarrierAheadCarrier( this.network, this.carriers, this.carriers[0] )
+        e0.pass     = [ e1 ]
+        e1.block    = [ e0 ]
 
-            expect( res )
-                .toNotExist()
-        })
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.95 },
+                decision    : { path    : [ nodes[2] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 1 ), k : 0.95 },
+                decision    : { path    : [ nodes[2] ] },
+                index       : 1,
+            },
+        ]
 
+        const res = getCarrierAheadCarrier( carriers, carriers[0] )
+
+        expect( res && res.carrier ).toBe( carriers[1] )
     })
 })

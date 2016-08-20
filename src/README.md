@@ -6,28 +6,26 @@
 ```yaml
 network :
     arcs :
-        -   index   : <int>             # index of the arc in the network.arcs array
-        -   a       : <int>             # index of the starting node in the network.nodes array
-        -   b       : <int>             # index of the ending node in the network.nodes array
+        -   node_a       : <node>       # reference to the starting node
+        -   node_b       : <node>       # reference to the ending node
         -   length  : <number>          # distance between the starting and ending node
 
     nodes :
-        -   index   : <int>             # index of the arc in the network.nodes array
         -   x       : <number>
         -   y       : <number>
         -   entering:
-            - <int>                     # index of arc which enters the node
+            - <arc>                     # reference to arc that are entering the node
 
         -   leaving:
-            - <int>                     # index of arc which leaves the node
+            - <arc>                     # reference to arc that are leaving the node
 
-        -   exchanges:
-            - arc_a     : <int>         # index of arc which comes in
-            - arc_b     : <int>         # index of arc which comes out
+        -   exchanges:                  # describe the possibility of arc change around the node, and the priorities
+            - arc_a     : <arc>         # reference to arc from which the carrier arrives
+            - arc_b     : <arc>         # reference to arc from which the carrier goes out
             - pass      :
-                - <int>                 # index of exchanges that carrier in this exchange must let pass
+                - <exchange>            # reference to other exchange on this node which are prior to this one
 
             - block     :
-                - <int>                 # index of exchanges that carrier in this exchange can block pass
+                - <exchange>            # reference to other exchange on this node which are less prior to this one
 
 ```

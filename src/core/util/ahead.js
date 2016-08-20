@@ -1,16 +1,16 @@
 
-const getCarriersOnArc = ( network, carriers, arc_n ) =>
+const getCarriersOnArc = ( carriers, arc ) =>
     carriers
-        .filter( carrier => carrier.position.arc == arc_n )
+        .filter( carrier => carrier.position.arc == arc )
 
 // get the carriers ahead on the same arc
-const on_same = ( network, carriers, arc_n, l ) =>
+const on_same = ( carriers, arc, l ) =>
 
-    getCarriersOnArc( network, carriers, arc_n )
+    getCarriersOnArc( carriers, arc )
 
         .map( carrier => {
 
-            const l_ = ( 1-carrier.position.k ) * network.arcs[ arc_n ].length
+            const l_ = ( 1-carrier.position.k ) * carrier.position.arc.length
 
             return l_ < l && { carrier, distance: l-l_ }
         })
@@ -19,31 +19,34 @@ const on_same = ( network, carriers, arc_n, l ) =>
 
 // get the carriers ahead on the entering arcs
 // take account of the node priority
-const on_entering = ( network, carriers, arc, next_node, next_arc, l ) => {
+const on_entering = ( carriers, arc, next_arc, l ) => {
 
     const incomingArcs = next_arc
-        ? next_node.exchanges
-            .find( x => x.arc_a == arc.index && x.arc_b == next_arc.index )
+        ? arc.node_b.exchanges
+            .find( x => x.arc_a == arc && x.arc_b == next_arc )
             .pass
-            .map( i => next_node.exchanges[i].arc_a )
+            .map( ex => ex.arc_a )
 
         // if the next arc in null, the carrier has the lowest priority ( because fuck him )
-        : next_node.exchanges
-            .map( x => x.arc_a  )
+        // xxxx should take arc once only ( they can be dup here )
+        : arc.node_b.exchanges
+            .map( ex => ex.arc_a )
+            .filter( arc_i => arc != arc_i )
+            && []
 
 
     return [].concat(
 
         ...incomingArcs
-            .map( arc_n =>
+            .map( arc =>
 
                 // find all the carriers on this arc
-                getCarriersOnArc( network, carriers, arc_n )
+                getCarriersOnArc( carriers, arc )
 
                     // determine if the carrier is close to the node
                     .map( carrier => {
 
-                        const l_ = ( 1-carrier.position.k ) * network.arcs[ arc_n ].length
+                        const l_ = ( 1-carrier.position.k ) * carrier.position.arc.length
 
                         // TODO some consideration of the other carrier velocity ?
 
@@ -56,20 +59,20 @@ const on_entering = ( network, carriers, arc, next_node, next_arc, l ) => {
 }
 
 // get the carriers ahead on the leaving arcs
-const on_leaving = ( network, carriers, arc, next_node, next_arc, l ) =>
+const on_leaving = ( carriers, node, l ) =>
 
     [].concat(
 
-        ...next_node.leaving
+        ...node.arcs_leaving
             .map( arc =>
 
                 // find all the carriers on this arc
-                getCarriersOnArc( network, carriers, arc.index )
+                getCarriersOnArc( carriers, arc )
 
                     // determine if the carrier have crossed the node already
                     .map( carrier => {
 
-                        const l_ = ( carrier.position.k ) * network.arcs[ arc.index ].length
+                        const l_ = carrier.position.k * carrier.position.arc.length
 
                         // TODO some consideration of the other carrier velocity ?
 
@@ -88,18 +91,13 @@ const on_leaving = ( network, carriers, arc, next_node, next_arc, l ) =>
  *             - consider the ones that are not completely off the intersection even if they not in the path
  *             - consider the ones that are entering the intersection, only if they have the priority in the intersection
  */
-const getCarrierAhead = ( network, carriers, arc_n, k, path, distance=0 ) => {
+const getCarrierAhead = ( carriers, arc, k, path, carrier, distance=0 ) => {
 
     if ( distance > 200 )
         return null
 
-    // current arc
-    const arc       = network.arcs[ arc_n ]
-
     // next arc to go
-    const next_arc  = network.arcs.find( x => x.a == path[0] && x.b == path[1] )
-
-    const next_node = network.nodes[ path[0] ]
+    const next_arc  = arc.node_b.arcs_leaving.find( x => x.node_b == path[0] )
 
     // distance to next node
     const l         = ( 1-k ) * arc.length
@@ -107,14 +105,16 @@ const getCarrierAhead = ( network, carriers, arc_n, k, path, distance=0 ) => {
     const x = [
 
         // carriers on the same arc, ahead
-        ...on_same( network, carriers, arc_n, l ),
+        ...on_same( carriers, arc, l ),
 
         // carriers in node, which will enter the node and are in a more prior exchange
-        ...on_entering( network, carriers, arc, next_node, next_arc, l ),
+        ...on_entering( carriers, arc, next_arc, l ),
 
         // carriers in node, exiting
-        ...on_leaving( network, carriers, arc, next_node, next_arc, l ),
+        ...on_leaving( carriers, arc.node_b, l ),
     ]
+
+        .filter( x => x.carrier != carrier )
 
         // take the closest
         .reduce( (ahead, x) =>
@@ -128,12 +128,12 @@ const getCarrierAhead = ( network, carriers, arc_n, k, path, distance=0 ) => {
 
         ? { ...x, distance: x.distance+distance }
 
-        : next_arc && getCarrierAhead( network, carriers, next_arc.index, 0, path.slice(1), distance+l )
+        : next_arc && getCarrierAhead( carriers, next_arc, 0, path.slice(1), carrier, distance+l )
 }
 
 
-const getCarrierAheadCarrier = ( network, carriers, carrier, distance=0 ) =>
-    getCarrierAhead( network, carriers, carrier.position.arc, carrier.position.k, carrier.decision.path, distance )
+const getCarrierAheadCarrier = ( carriers, carrier, distance=0 ) =>
+    getCarrierAhead( carriers, carrier.position.arc, carrier.position.k, carrier.decision.path, carrier, distance )
 
 
 module.exports = { getCarrierAhead, getCarrierAheadCarrier }

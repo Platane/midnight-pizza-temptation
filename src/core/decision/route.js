@@ -2,16 +2,16 @@ import { aStar }            from 'math/graph'
 
 const choseNewRoute = ( network, carrier ) => {
 
-    const currentNode = network.arcs[ carrier.position.arc ].b
+    const currentNode = carrier.position.arc.node_b
 
     const availableDestinations = network.nodes
         .slice( 0, 2 )
-        .filter( x => x.index != currentNode )
+        .filter( x => x != currentNode )
 
-    const destination = availableDestinations[ Math.floor(Math.random() * availableDestinations.length) ].index
+    const destination = availableDestinations[ Math.floor(Math.random() * availableDestinations.length) ]
 
     // chose a path to the destination
-    carrier.decision.path = aStar( network, currentNode, destination, x => x.length / x.maxSpeed )
+    carrier.decision.path = aStar( currentNode, destination, x => x.length )
         .slice(1)
 }
 

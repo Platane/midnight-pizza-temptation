@@ -1,37 +1,13 @@
 import point    from 'math/point'
 
-// precompute stuff
-const prepare = network => {
-
-    network.nodes.forEach( (n,index) => {
-
-        n.leaving   = []
-        n.entering  = []
-
-        n.index = index
-    })
-
-    network.arcs.forEach( (x,index) => {
-
-        x.index = index
-        x.length = point.distance( network.nodes[ x.a ], network.nodes[ x.b ] )
-
-        network.nodes[ x.a ].leaving.push( x )
-        network.nodes[ x.b ].entering.push( x )
-    })
-
-}
-
-
-
 
 // return the fastest path to go from a to b
 // compute_w is the method which attribute the weight to the arc, by default it's its length
-const aStar = ( network, node_start, node_end, compute_w ) => {
+const aStar = ( node_start, node_end, compute_w ) => {
 
     compute_w = compute_w || ( x => x.length )
 
-    const h = point.distance( network.nodes[ node_start ], network.nodes[ node_end ] )
+    const h = point.distance( node_start, node_end )
     let openList  = [{
         node    : node_start,
         w       : 0,
@@ -58,15 +34,15 @@ const aStar = ( network, node_start, node_end, compute_w ) => {
         }
 
         // propage
-        network.nodes[ e.node ].leaving
+        e.node.arcs_leaving
             .forEach( arc => {
 
-                if ( closeList[ arc.b ] )
+                if ( closeList[ arc.node_b.index ] )
                     return
 
                 const w = e.w + compute_w( arc )
 
-                const u = openList.find( u => u.node == arc.b )
+                const u = openList.find( u => u.node == arc.node_b )
 
                 if ( u && u.w > w ) {
 
@@ -76,9 +52,9 @@ const aStar = ( network, node_start, node_end, compute_w ) => {
 
                 } else if ( !u ){
 
-                    const h = point.distance( network.nodes[ node_end ], network.nodes[ arc.b ] )
+                    const h = point.distance( node_end, arc.node_b )
                     openList.push({
-                        node    : arc.b,
+                        node    : arc.node_b,
                         w,
                         h,
                         f       : w+h,
@@ -88,11 +64,11 @@ const aStar = ( network, node_start, node_end, compute_w ) => {
 
             })
 
-        closeList[ e.node ] = true
+        closeList[ e.node.index ] = true
 
         openList = openList.sort( (a,b) => a.f < b.f ? 1 : -1 )
     }
 
 }
 
-module.exports = { prepare, aStar }
+module.exports = { aStar }
