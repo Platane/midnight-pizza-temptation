@@ -1,6 +1,7 @@
 
 
 import {delaunayTriangulation}  from 'math/tesselation/delaunayTriangulation'
+import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
 import expect   from 'expect'
 
 describe('tesselation', function(){
@@ -25,5 +26,21 @@ describe('tesselation', function(){
         })
 
         xit('should handle the case where a point is on an edge', function(){})
+    })
+
+    describe('Voronoi tesselation',function(){
+
+        it('should not crash',function(){
+
+            const { faces, vertices } = voronoiTesselation([
+                {x:0  ,y:0  },
+                {x:100,y:0  },
+                {x:50  ,y:40},
+                {x:50  ,y:100},
+            ])
+
+            expect( faces.length ).toBe( 1 )
+            expect( vertices.length ).toBe( 3 )
+        })
     })
 })

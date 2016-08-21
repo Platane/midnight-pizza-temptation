@@ -161,4 +161,4 @@ const delaunayTriangulation = points => {
 }
 
 
-module.exports = { delaunayTriangulation }
+module.exports = { circonscritCircle, delaunayTriangulation }
