@@ -3,7 +3,7 @@ const ctx = document.getElementById('app').getContext('2d')
 import point    from 'math/point'
 import {getCarrierAheadCarrier} from 'core/util/ahead'
 
-
+const bezierMarge = 12
 const marge = 3
 const node_r = 18
 const arrow_h = 4
@@ -49,13 +49,13 @@ const drawNetwork = ({ nodes, arcs }) => {
 
 }
 
-const onArc = carrier => {
-    const {node_a, node_b} = carrier.position.arc
+const onArc = ( arc, k ) => {
+    const {node_a, node_b} = arc
 
     const n = point.sub( node_b, node_a )
     const l = point.length( n )
 
-    const p = point.lerp( node_a, node_b, carrier.position.k )
+    const p = point.lerp( node_a, node_b, k )
 
     return {
         x : p.x + n.y/l*marge,
@@ -63,7 +63,18 @@ const onArc = carrier => {
     }
 }
 
+const carrierOnArc = ({ position }) =>
+    onArc( position.arc, position.k )
 
+const bezier = ( A, O, B, k ) => {
+    const _k = 1-k
+    return {
+        x : A.x * _k * _k   +   2 * k * _k * O.x   +   k * k * B.x,
+        y : A.y * _k * _k   +   2 * k * _k * O.y   +   k * k * B.y,
+    }
+}
+
+const _cache = {}
 const drawCarriers = ( network, carriers ) =>
 
     carriers
@@ -78,8 +89,8 @@ const drawCarriers = ( network, carriers ) =>
 
             const w = ( 1 - Math.min( 100, x.distance ) / 100 )
 
-            const U = onArc( u )
-            const V = onArc( v )
+            const U = carrierOnArc( u )
+            const V = carrierOnArc( v )
 
             ctx.save()
             ctx.strokeStyle = `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
@@ -96,19 +107,46 @@ const drawCarriers = ( network, carriers ) =>
 
     carriers
         .forEach( (carrier, i) => {
-            const arc = carrier.position.arc
+            let p
 
-            const {node_a, node_b} = arc
+            const distanceToEnd     = ( 1-carrier.position.k ) * carrier.position.arc.length
+            const distanceToStart   = carrier.position.k * carrier.position.arc.length
 
-            const n = point.sub( node_b, node_a )
-            const l = point.length( n )
+            if ( distanceToEnd < bezierMarge && carrier.decision.path[ 0 ] ) {
 
-            const p = point.lerp( node_a, node_b, carrier.position.k )
+                if ( !_cache[ carrier.index ] ) {
+
+                    const arcA = carrier.position.arc
+                    const arcB = carrier.position.arc.node_b.arcs_leaving.find( x => x.node_b == carrier.decision.path[0] )
+
+                    _cache[ carrier.index ] = {
+                        A : onArc( arcA, 1 - bezierMarge / arcA.length ),
+                        O : carrier.position.arc.node_b,
+                        B : onArc( arcB, bezierMarge / arcB.length ),
+                    }
+                }
+
+                const { A, O, B } = _cache[ carrier.index ]
+
+                p = bezier( A, O, B, (1-distanceToEnd/bezierMarge) *0.5 )
+
+            } else if ( distanceToStart < bezierMarge && _cache[ carrier.index ] ) {
+
+                const { A, O, B } = _cache[ carrier.index ]
+
+                p = bezier( A, O, B, distanceToStart/bezierMarge *0.5 + 0.5 )
+
+            } else {
+
+                _cache[ carrier.index ] = null
+
+                p = carrierOnArc( carrier )
+            }
 
             ctx.save()
             ctx.fillStyle = `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
             ctx.beginPath()
-            ctx.arc( p.x + n.y/l*marge, p.y - n.x/l*marge, 4, 0, Math.PI*2 )
+            ctx.arc( p.x, p.y, 6, 0, Math.PI*2 )
             ctx.fill()
             ctx.restore()
         })
