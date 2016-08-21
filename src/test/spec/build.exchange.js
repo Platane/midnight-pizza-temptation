@@ -26,7 +26,7 @@ describe('build exchange', function(){
 
     afterEach(function( done ){
 
-        if( !location.search.match(/break/) )
+        if( typeof location == 'undefined' || !location.search.match(/break/) )
             return done()
 
         this.timeout(99999999999)

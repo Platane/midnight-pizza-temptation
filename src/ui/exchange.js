@@ -1,4 +1,4 @@
-const ctx = document.getElementById('ex').getContext('2d')
+const ctx = typeof document != 'undefined' && document.getElementById('ex').getContext('2d')
 
 import point    from 'math/point'
 
@@ -63,7 +63,7 @@ const drawExchange = ( exchanges, exchange ) => {
 }
 
 const drawExchanges = exchanges =>
-    exchanges.forEach( (exchange, i) => {
+    ctx && exchanges.forEach( (exchange, i) => {
 
         ctx.save()
         ctx.translate(180 * i, 10)
@@ -73,5 +73,5 @@ const drawExchanges = exchanges =>
 
 module.exports = {
     drawExchanges,
-    clear: () => ctx.clearRect(0,0,9999,9999),
+    clear: () => ctx && ctx.clearRect(0,0,9999,9999),
 }
