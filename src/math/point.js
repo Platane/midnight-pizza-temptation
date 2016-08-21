@@ -15,6 +15,9 @@ const length = a =>
 const distance = ( a, b ) =>
     length( sub( a, b ) )
 
+const sqrt_distance = ( a, b ) =>
+    sqrt_length( sub( a, b ) )
+
 module.exports = {
 
     sub,
@@ -22,6 +25,8 @@ module.exports = {
     sqrt_length,
 
     length,
+
+    sqrt_distance,
 
     distance,
 
