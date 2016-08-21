@@ -41,13 +41,6 @@ const carriers = Array.from({ length: 30 })
             index   : i,
         })
     )
-const { arcs, nodes } = network
-
-const e0 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 0 )
-const e1 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 1 )
-
-e0.pass     = [ e1 ]
-e1.block    = [ e0 ]
 
 const loop = () => {
 

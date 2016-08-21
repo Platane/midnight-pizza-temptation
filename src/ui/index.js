@@ -4,7 +4,7 @@ import point    from 'math/point'
 import {getCarrierAheadCarrier} from 'core/util/ahead'
 
 const bezierMarge = 12
-const marge = 3
+const marge = 5
 const node_r = 18
 const arrow_h = 4
 const arrow_l = 6
@@ -74,7 +74,48 @@ const bezier = ( A, O, B, k ) => {
     }
 }
 
+const color = i =>
+    `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
+
+
 const _cache = {}
+const getCarrierPosition = carrier => {
+
+    const distanceToEnd     = ( 1-carrier.position.k ) * carrier.position.arc.length
+    const distanceToStart   = carrier.position.k * carrier.position.arc.length
+
+    if ( distanceToEnd < bezierMarge && carrier.decision.path[ 0 ] ) {
+
+        if ( !_cache[ carrier.index ] ) {
+
+            const arcA = carrier.position.arc
+            const arcB = carrier.position.arc.node_b.arcs_leaving.find( x => x.node_b == carrier.decision.path[0] )
+
+            _cache[ carrier.index ] = {
+                A : onArc( arcA, 1 - bezierMarge / arcA.length ),
+                O : carrier.position.arc.node_b,
+                B : onArc( arcB, bezierMarge / arcB.length ),
+            }
+        }
+
+        const { A, O, B } = _cache[ carrier.index ]
+
+        return bezier( A, O, B, (1-distanceToEnd/bezierMarge) *0.5 )
+
+    } else if ( distanceToStart < bezierMarge && _cache[ carrier.index ] ) {
+
+        const { A, O, B } = _cache[ carrier.index ]
+
+        return bezier( A, O, B, distanceToStart/bezierMarge *0.5 + 0.5 )
+
+    } else {
+
+        _cache[ carrier.index ] = null
+
+        return carrierOnArc( carrier )
+    }
+}
+
 const drawCarriers = ( network, carriers ) =>
 
     carriers
@@ -89,11 +130,11 @@ const drawCarriers = ( network, carriers ) =>
 
             const w = ( 1 - Math.min( 100, x.distance ) / 100 )
 
-            const U = carrierOnArc( u )
-            const V = carrierOnArc( v )
+            const U = getCarrierPosition( u )
+            const V = getCarrierPosition( v )
 
             ctx.save()
-            ctx.strokeStyle = `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
+            ctx.strokeStyle = color( u.index )
             ctx.lineWidth = w * 5
             ctx.globalAlpha = w
             ctx.beginPath()
@@ -107,44 +148,11 @@ const drawCarriers = ( network, carriers ) =>
 
     carriers
         .forEach( (carrier, i) => {
-            let p
 
-            const distanceToEnd     = ( 1-carrier.position.k ) * carrier.position.arc.length
-            const distanceToStart   = carrier.position.k * carrier.position.arc.length
-
-            if ( distanceToEnd < bezierMarge && carrier.decision.path[ 0 ] ) {
-
-                if ( !_cache[ carrier.index ] ) {
-
-                    const arcA = carrier.position.arc
-                    const arcB = carrier.position.arc.node_b.arcs_leaving.find( x => x.node_b == carrier.decision.path[0] )
-
-                    _cache[ carrier.index ] = {
-                        A : onArc( arcA, 1 - bezierMarge / arcA.length ),
-                        O : carrier.position.arc.node_b,
-                        B : onArc( arcB, bezierMarge / arcB.length ),
-                    }
-                }
-
-                const { A, O, B } = _cache[ carrier.index ]
-
-                p = bezier( A, O, B, (1-distanceToEnd/bezierMarge) *0.5 )
-
-            } else if ( distanceToStart < bezierMarge && _cache[ carrier.index ] ) {
-
-                const { A, O, B } = _cache[ carrier.index ]
-
-                p = bezier( A, O, B, distanceToStart/bezierMarge *0.5 + 0.5 )
-
-            } else {
-
-                _cache[ carrier.index ] = null
-
-                p = carrierOnArc( carrier )
-            }
+            const p = getCarrierPosition( carrier )
 
             ctx.save()
-            ctx.fillStyle = `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
+            ctx.fillStyle = color( carrier.index )
             ctx.beginPath()
             ctx.arc( p.x, p.y, 6, 0, Math.PI*2 )
             ctx.fill()

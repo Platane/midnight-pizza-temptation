@@ -13,10 +13,10 @@ network :
     nodes :
         -   x       : <number>
         -   y       : <number>
-        -   entering:
+        -   arcs_entering:
             - <arc>                     # reference to arc that are entering the node
 
-        -   leaving:
+        -   arcs_leaving:
             - <arc>                     # reference to arc that are leaving the node
 
         -   exchanges:                  # describe the possibility of arc change around the node, and the priorities
