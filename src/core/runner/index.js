@@ -1,6 +1,7 @@
 
 import { computeAcceleration }  from 'core/decision/acceleration'
 import { choseNewRoute }        from 'core/decision/route'
+import { getAcceleration }      from 'controller'
 
 const step = ( network, carriers ) =>
 
@@ -23,12 +24,12 @@ const step = ( network, carriers ) =>
                 carrier.position.k      = 0
             }
 
+            const acc = carrier.index == 0
+                ? getAcceleration() ? carrier.info.maxAcc : -carrier.info.maxBrake
+                : computeAcceleration( carriers, carrier )
+
             // compute the acceleration
-            carrier.position.velocity = Math.max(0,
-                Math.min( carrier.info.maxVelocity,
-                    carrier.position.velocity + computeAcceleration( carriers, carrier )
-                )
-            )
+            carrier.position.velocity = Math.max(0,Math.min( carrier.info.maxVelocity, carrier.position.velocity + acc ))
 
             // move the carrier
             carrier.position.k += carrier.position.velocity / carrier.position.arc.length
