@@ -12,12 +12,16 @@ const voronoiTesselation = ( points ) => {
     points.forEach( (_,i) => {
 
         // every triangle which contains the vertice i
-        const edges = triangles
-            .filter( vertices => vertices.some( x => i == x ) )
-            .map( vertices => vertices.filter( x => i != x ) )
+        const edges = []
 
-        let [ a, e ] = edges.shift()
-        const hull = [ e ]
+        triangles
+            .forEach( (vertices, k) => {
+                if ( vertices.some( x => i == x ) )
+                    edges.push( [ ...vertices.filter( x => i != x ), k ] )
+            })
+
+        let [ a, e, k ] = edges.shift()
+        const hull = [ k ]
 
         while( a != e ){
 
@@ -27,9 +31,9 @@ const voronoiTesselation = ( points ) => {
                 // if the hull is not closed, ignore ( it' because the triangle is part of the global hull )
                 return
 
-            hull.push( e = edges[i][0] == e ? edges[i][1] : edges[i][0] )
+            e = edges[i][0] == e ? edges[i][1] : edges[i][0]
 
-            edges.splice(i,1)
+            hull.push( edges.splice(i,1)[0][2] )
         }
 
         faces.push( hull )
