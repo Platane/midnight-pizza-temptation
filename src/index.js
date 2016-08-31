@@ -55,26 +55,84 @@ const loop = () => {
 loop()
 
 
-// import genreratePointCloud from 'math/pointCloud'
-//
-//
-// const {points, wells} = genreratePointCloud({
-//     n_point : 1000,
-//     width   : 500,
-//     height  : 500,
-//     n_well  : 10,
-// })
-//
-// const ctx = document.getElementById('cloud').getContext('2d')
-// wells.forEach( p => {
-//     ctx.fillStyle = '#f2a1e0'
+import {createPerlin}   from 'math/perlin'
+import {step as sstep}  from 'math/pointCloud'
+import {delaunayTriangulation}  from 'math/tesselation/delaunayTriangulation'
+import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
+
+const perlin = createPerlin( 700, 700, 200 )
+
+let max = -Infinity
+let min =  Infinity
+
+const ctx = document.getElementById('cloud').getContext('2d')
+const r=5
+for(let x=700;x-=r;)
+for(let y=700;y-=r;){
+
+    ctx.fillStyle = `hsla( ${ perlin( x, y ) * 2 * 280 }, 90%, 60%, 0.04 )`
+    ctx.beginPath()
+    ctx.rect( x, y, r, r )
+    ctx.fill()
+
+    max = Math.max( max, perlin( x, y ) )
+    min = Math.min( min, perlin( x, y ) )
+}
+
+const points = []
+while( points.length < 500 ){
+
+    const p = {x:Math.random()*700,y:Math.random()*700}
+
+    if ( Math.random() > perlin( p.x, p.y ) * 2 + 0.5 )
+        points.push( p )
+}
+
+for( let k=2; k--;)
+    sstep( points, [], 700, 700 )
+
+points.forEach( p => {
+    ctx.fillStyle = `hsla( ${ perlin( p.x, p.y ) * 2 * 280 }, 90%, 40%, 0.001 )`
+    ctx.beginPath()
+    ctx.arc( p.x, p.y, 3, 0, Math.PI*2 )
+    ctx.fill()
+})
+
+const faces = delaunayTriangulation( points )
+
+// faces.forEach( ([a,b,c]) => {
+//     ctx.lineStyle='rgba(0,0,0,0.5)'
+//     ctx.lineWidth=0.2
 //     ctx.beginPath()
-//     ctx.arc( p.x, p.y, 4, 0, Math.PI*2 )
-//     ctx.fill()
+//     ctx.moveTo( points[a].x, points[a].y )
+//     ctx.lineTo( points[b].x, points[b].y )
+//     ctx.lineTo( points[c].x, points[c].y )
+//     ctx.lineTo( points[a].x, points[a].y )
+//     ctx.stroke()
 // })
-// points.forEach( p => {
-//     ctx.fillStyle = '#72a180'
-//     ctx.beginPath()
-//     ctx.arc( p.x, p.y, 1.5, 0, Math.PI*2 )
-//     ctx.fill()
-// })
+
+{
+const { faces, vertices } = voronoiTesselation( points )
+
+
+const roads = []
+faces
+    .forEach( face =>
+        face.forEach((_,i) =>
+            roads.push( [ face[i], face[(i+1)%face.length] ] )
+        )
+    )
+
+roads
+.filter( ([a,b],i,arr) => !arr.slice(i+1).some( ([u,v]) => (u==a && v==b) || (u==b && v==a) ) )
+.filter( () => Math.random() > 0.4 )
+.forEach( road => {
+    ctx.lineStyle='rgba(0,0,0,0.5)'
+    ctx.lineWidth=0.5
+    ctx.beginPath()
+    ctx.moveTo( vertices[ road[0] ].x, vertices[ road[0] ].y )
+    ctx.lineTo( vertices[ road[1] ].x, vertices[ road[1] ].y )
+    ctx.stroke()
+})
+
+}

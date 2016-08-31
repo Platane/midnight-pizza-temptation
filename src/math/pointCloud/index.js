@@ -145,4 +145,4 @@ const generate = ( options = {} ) => {
 }
 
 
-module.exports = generate
+module.exports = { generate, step }

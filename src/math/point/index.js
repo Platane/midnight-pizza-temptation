@@ -6,8 +6,11 @@ const sub = ( a, b ) =>
         y   :  a.y - b.y,
     })
 
-const sqrt_length = a =>
+const scalar = a =>
     a.x*a.x + a.y*a.y
+
+const sqrt_length = a =>
+    scalar( a )
 
 const length = a =>
     Math.sqrt( sqrt_length( a ) )
@@ -17,6 +20,13 @@ const distance = ( a, b ) =>
 
 const sqrt_distance = ( a, b ) =>
     sqrt_length( sub( a, b ) )
+
+const normalize = a => {
+    const l = length( a )
+    return {x:a.x/l, y:a.y/l}
+}
+
+
 
 module.exports = {
 
@@ -29,6 +39,8 @@ module.exports = {
     sqrt_distance,
 
     distance,
+
+    normalize,
 
     // return    a * ( 1-k ) + b * k
     //   =>  k == 0   =>   x == a
