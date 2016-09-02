@@ -55,6 +55,12 @@ const loop = () => {
 loop()
 
 
+import { createExchange }         from './ui/_exchange'
+
+document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 3 ].exchanges ) )
+document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 0 ].exchanges ) )
+document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 2 ].exchanges ) )
+
 import {createPerlin}   from 'math/perlin'
 import {step as sstep}  from 'math/pointCloud'
 import {delaunayTriangulation}  from 'math/tesselation/delaunayTriangulation'
@@ -80,7 +86,7 @@ for(let y=700;y-=r;){
 }
 
 const points = []
-while( points.length < 500 ){
+while( points.length < 800 ){
 
     const p = {x:Math.random()*700,y:Math.random()*700}
 
@@ -98,8 +104,8 @@ points.forEach( p => {
     ctx.fill()
 })
 
-const faces = delaunayTriangulation( points )
-
+// const faces = delaunayTriangulation( points )
+//
 // faces.forEach( ([a,b,c]) => {
 //     ctx.lineStyle='rgba(0,0,0,0.5)'
 //     ctx.lineWidth=0.2
@@ -125,7 +131,7 @@ faces
 
 roads
 .filter( ([a,b],i,arr) => !arr.slice(i+1).some( ([u,v]) => (u==a && v==b) || (u==b && v==a) ) )
-.filter( () => Math.random() > 0.4 )
+// .filter( () => Math.random() > 0.4 )
 .forEach( road => {
     ctx.lineStyle='rgba(0,0,0,0.5)'
     ctx.lineWidth=0.5
