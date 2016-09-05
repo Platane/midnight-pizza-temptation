@@ -9,7 +9,8 @@ const network = build([
     { x:50 , y:50 , links: [3]   },
     { x:750, y:50 , links: [3]   },
     { x:400, y:450, links: [0,1] },
-    { x:400, y:50 , links: [2]   },
+    { x:400, y:140, links: [2]   },
+    // { x:400, y:10 , links: [3]   },
 ])
 // const network = build([
 //     { x:100,    y:100,   links:[1] },
@@ -42,6 +43,8 @@ const carriers = Array.from({ length: 30 })
         })
     )
 
+import { close } from 'ui/close'
+
 const loop = () => {
 
     step( network, carriers )
@@ -49,6 +52,8 @@ const loop = () => {
     clear()
     drawNetwork( network )
     drawCarriers( network, carriers )
+
+    close( document.getElementById('close').getContext('2d'), 200, 200, carriers, network, carriers[0] )
 
     requestAnimationFrame( loop )
 }
@@ -58,8 +63,6 @@ loop()
 import { createExchange }         from './ui/_exchange'
 
 document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 3 ].exchanges ) )
-document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 0 ].exchanges ) )
-document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 2 ].exchanges ) )
 
 import {createPerlin}   from 'math/perlin'
 import {step as sstep}  from 'math/pointCloud'
