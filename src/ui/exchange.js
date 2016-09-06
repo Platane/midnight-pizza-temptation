@@ -1,77 +1,173 @@
-const ctx = typeof document != 'undefined' && document.getElementById('ex').getContext('2d')
 
-import point    from 'math/point'
+import point            from 'math/point'
+import {intersection}   from 'math/line'
 
-const p = ( O, A, leaving ) => {
-    const a = Math.atan2( A.y - O.y, A.x - O.x ) + ( leaving ? 0.03 : -0.03 )
+const create = ( type, attributs={} ) => {
+    const el = document.createElementNS( 'http://www.w3.org/2000/svg', type )
+    Object.keys( attributs )
+        .forEach( key => el.setAttribute( key, attributs[ key ] ) )
+
+    return el
+}
+
+const margin    = 8
+const radius    = 60
+
+
+const s = ( A, positive, radius=0 ) => {
+    const l = point.length( A )
+
     return {
-        x : Math.cos( a ),
-        y : Math.sin( a ),
+        x: A.x/l*radius + A.y/l*margin*(positive?1:-1),
+        y: A.y/l*radius - A.x/l*margin*(positive?1:-1),
     }
 }
 
+const arc = ( A, B ) => {
 
-const drawRoad = exchange => {
-    const {arc_a, arc_b} = exchange
-    const A = p( arc_a.node_b, arc_a.node_a, false )
-    const B = p( arc_a.node_b, arc_b.node_b, true )
+    const a = s( A, true, 60 )
+    const b = s( B, false,60 )
 
+    const n = point.normalize( B )
 
-    ctx.beginPath()
-    ctx.moveTo( 75 + A.x*75 , 75 + A.y*75 )
-    ctx.quadraticCurveTo( 75 , 75, 75 + B.x*75 , 75 + B.y*75 )
-    ctx.lineTo( 75 + B.x*90 , 75 + B.y*90 )
-    ctx.stroke()
+    const c = intersection( a, A, b, B )
+
+    return [
+        'M', a.x, a.y,
+        'Q', c.x, c.y, ',', b.x, b.y,
+        'M', b.x, b.y,
+        'L', b.x -n.x*10  +  n.y*8,  b.y -n.y*10  -  n.x*8,
+        'M', b.x, b.y,
+        'L', b.x -n.x*10  -  n.y*8,  b.y -n.y*10  +  n.x*8,
+    ].join(' ')
 }
 
+const roads = ( A ) => {
 
-const drawExchange = ( exchanges, exchange ) => {
+    const a     = s( A, true, 60 )
+    const a_    = s( A, true, 70 )
 
-    ctx.save()
+    const b     = s( A, false, 60 )
+    const b_    = s( A, false, 70 )
 
-    ctx.beginPath()
-    ctx.arc(75,75,75,0,Math.PI*2)
-    ctx.strokeStyle= "#333"
-    ctx.stroke()
-
-
-    ctx.globalAlpha=0.5
-
-    ctx.lineWidth=1
-    ctx.strokeStyle= "#aaa"
-    exchanges.forEach( drawRoad )
-
-    ctx.lineWidth=8
-    ctx.strokeStyle= "#43c524"
-    drawRoad( exchange )
-
-    ctx.lineWidth=3
-    ctx.strokeStyle= "#962222"
-    exchange.block.forEach( drawRoad )
-
-    ctx.strokeStyle= "#03a9f4"
-    exchange.pass.forEach( drawRoad )
-
-
-
-
-
-
-
-
-    ctx.restore()
+    return [
+        'M', a.x    , a.y,
+        'L', a_.x   , a_.y,
+        'M', b.x    , b.y,
+        'L', b_.x   , b_.y,
+    ].join(' ')
 }
 
-const drawExchanges = exchanges =>
-    ctx && exchanges.forEach( (exchange, i) => {
+const createExchange = exchanges => {
 
-        ctx.save()
-        ctx.translate(180 * i, 10)
-        drawExchange( exchanges, exchange )
-        ctx.restore()
+    const svg = create( 'svg', {width:380,height:380, viewBox:'-90 -90 180 180'} )
+
+    svg.appendChild( create( 'circle', {cx:0, cy:0, r:62, fill:'none', stroke:'#eee'} ) )
+
+    const c = exchanges[0].arc_a.node_b
+
+    let nodes = []
+    exchanges.forEach( ({ arc_a, arc_b }) => {
+
+        nodes.push({ node: arc_a.node_a })
+        nodes.push({ node: arc_b.node_b })
+
+    })
+    nodes = nodes.filter( (x,i,arr) => !arr.slice(i+1).some( y => x.node == y.node ) )
+
+    nodes.forEach( (x,i) => {
+
+        const p     = point.normalize( point.sub( x.node, c ) )
+        const color = `hsl(${ (i*137+56)%360 }, 70%, 80%)`
+
+        x.circle = create('circle', { cx: p.x*80, cy: p.y*80, r:6, fill:color })
+        x.color  = color
+
+        const g = create('g')
+
+        svg.appendChild( g )
+
+        g.appendChild( x.circle )
+
+        g.appendChild( create('path', { d:roads( p ), 'fill': 'none', 'stroke': '#aaa', 'stroke-width': 1 }) )
+
     })
 
-module.exports = {
-    drawExchanges,
-    clear: () => ctx && ctx.clearRect(0,0,9999,9999),
+
+    const paths = exchanges
+        .map( x => {
+
+            const { arc_a, arc_b } = x
+
+            const path = create(
+                'path',
+                {
+                    d : arc(
+                        point.sub( arc_a.node_a, c ),
+                        point.sub( arc_b.node_b, c )
+                    ),
+                    fill            : 'none',
+                    'stroke-linecap': 'round',
+                }
+            )
+
+            svg.appendChild( path )
+
+            return { path, ex:x }
+        })
+
+    const setStyle = ( style, path ) => {
+        switch( style ){
+
+            case 'main' :
+            path.style.strokeWidth = 2
+                path.style.stroke = '#b349ad'
+                path.style.strokeDasharray = null
+                svg.appendChild( svg.removeChild( path ) )
+                break
+
+            case 'pass' :
+                path.style.strokeWidth = 4
+                path.style.stroke = '#29b331'
+                path.style.strokeDasharray = null
+                svg.appendChild( svg.removeChild( path ) )
+                break
+
+            case 'block' :
+                path.style.strokeWidth = 5
+                path.style.stroke = '#aaaaaa'
+                path.style.strokeDasharray = '0,6'
+                svg.appendChild( svg.removeChild( path ) )
+                break
+
+            default:
+                path.style.strokeWidth = 5
+                path.style.stroke = '#aaaaaa'
+                path.style.strokeDasharray = null
+                break
+        }
+    }
+
+
+    const getPath = ex => paths.find( x => x.ex == ex ).path
+    const selectExchange = ex => {
+
+        paths.forEach( ({ path }) => setStyle( null, path ) )
+
+        ex.block.forEach( ex => setStyle( 'block', getPath( ex ) ) )
+
+        ex.pass.forEach( ex => setStyle( 'pass', getPath( ex ) ) )
+
+        setStyle( 'main', getPath( ex ) )
+
+
+    }
+
+    paths.forEach( x => x.path.addEventListener('click', () => selectExchange( x.ex ) ) )
+
+    selectExchange( exchanges[0] )
+
+    return svg
 }
+
+module.exports = { createExchange }

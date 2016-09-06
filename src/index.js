@@ -3,7 +3,6 @@ require('file?name=index.html!./index.html')
 import { drawNetwork, drawCarriers, clear }         from './ui'
 import { step }                                     from 'core/runner'
 import { build }                                    from 'math/graph/build'
-import { aStar }                                    from 'math/graph'
 
 const network = build([
     { x:50 , y:50 , links: [3]   },
@@ -61,7 +60,7 @@ const loop = () => {
 loop()
 
 
-import { createExchange }         from './ui/_exchange'
+import { createExchange }         from './ui/exchange'
 
 document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 3 ].exchanges ) )
 
