@@ -1,7 +1,7 @@
 
 
-import {drawExchanges, clear}           from 'ui/exchange'
-import {buildExchange, build}           from 'math/graph/build'
+import {createExchange}                 from 'ui/exchange'
+import {buildExchange}                  from 'math/graph/build'
 import expect                           from 'expect'
 
 
@@ -19,9 +19,15 @@ const createNodes = length =>
 
 describe('build exchange', function(){
 
+    beforeEach(function(){
+        if ( typeof document == 'undefined' )
+            return
+
+        this.dom = document.getElementById('exchanges')
+    })
+
     afterEach(function(){
-        clear()
-        this.exchanges && drawExchanges( this.exchanges )
+        this.dom && this.dom.appendChild( createExchange( this.exchanges ) )
     })
 
     afterEach(function( done ){
@@ -36,9 +42,10 @@ describe('build exchange', function(){
             done()
         }
     })
-
+    
     afterEach(function(){
-        clear()
+        while(this.dom && this.dom.children.length)
+            this.dom.removeChild(this.dom.children[0])
     })
 
     it('with "T" intersection', function(){

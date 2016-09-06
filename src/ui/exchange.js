@@ -11,7 +11,6 @@ const create = ( type, attributs={} ) => {
 }
 
 const margin    = 8
-const radius    = 60
 
 
 const s = ( A, positive, radius=0 ) => {
