@@ -90,6 +90,10 @@ const createExchange = exchanges => {
 
         g.appendChild( create('path', { d:roads( p ), 'fill': 'none', 'stroke': '#aaa', 'stroke-width': 1 }) )
 
+        const text = create('text', { x:p.x*80+6,  y:p.y*80+5,  fill:color, 'font-family': 'consolas', 'font-size':'8' })
+        text.innerHTML = x.node.index
+        g.appendChild( text )
+
     })
 
 

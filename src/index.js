@@ -9,14 +9,7 @@ const network = build([
     { x:750, y:50 , links: [3]   },
     { x:400, y:450, links: [0,1] },
     { x:400, y:140, links: [2]   },
-    // { x:400, y:10 , links: [3]   },
 ])
-// const network = build([
-//     { x:100,    y:100,   links:[1] },
-//     { x:100,    y:400,   links:[2] },
-//     { x:400,    y:400,   links:[3] },
-//     { x:400,    y:100,   links:[0] },
-// ])
 
 
 const info = {
@@ -64,15 +57,15 @@ import { createExchange }         from './ui/exchange'
 
 document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 3 ].exchanges ) )
 
-import {createPerlin}   from 'math/perlin'
-import {step as sstep}  from 'math/pointCloud'
-import {delaunayTriangulation}  from 'math/tesselation/delaunayTriangulation'
-import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
+import generateNetwork          from 'core/generation'
 
-const perlin = createPerlin( 700, 700, 200 )
-
-let max = -Infinity
-let min =  Infinity
+const { perlin, vertices, faces, graph, sinks } = generateNetwork({
+    width           : 700,
+    height          : 700,
+    perlin_size     : 280,
+    n_points        : 700,
+    n_sinks         : 20,
+})
 
 const ctx = document.getElementById('cloud').getContext('2d')
 const r=5
@@ -83,65 +76,45 @@ for(let y=700;y-=r;){
     ctx.beginPath()
     ctx.rect( x, y, r, r )
     ctx.fill()
-
-    max = Math.max( max, perlin( x, y ) )
-    min = Math.min( min, perlin( x, y ) )
 }
 
-const points = []
-while( points.length < 800 ){
+faces.forEach( face => {
 
-    const p = {x:Math.random()*700,y:Math.random()*700}
-
-    if ( Math.random() > perlin( p.x, p.y ) * 2 + 0.5 )
-        points.push( p )
-}
-
-for( let k=2; k--;)
-    sstep( points, [], 700, 700 )
-
-points.forEach( p => {
-    ctx.fillStyle = `hsla( ${ perlin( p.x, p.y ) * 2 * 280 }, 90%, 40%, 0.001 )`
     ctx.beginPath()
-    ctx.arc( p.x, p.y, 3, 0, Math.PI*2 )
-    ctx.fill()
-})
+    ctx.strokeStyle='rgba(0,0,0,0.1)'
+    ctx.lineWidth=0.2
 
-// const faces = delaunayTriangulation( points )
-//
-// faces.forEach( ([a,b,c]) => {
-//     ctx.lineStyle='rgba(0,0,0,0.5)'
-//     ctx.lineWidth=0.2
-//     ctx.beginPath()
-//     ctx.moveTo( points[a].x, points[a].y )
-//     ctx.lineTo( points[b].x, points[b].y )
-//     ctx.lineTo( points[c].x, points[c].y )
-//     ctx.lineTo( points[a].x, points[a].y )
-//     ctx.stroke()
-// })
+    const u = [ face[ face.length-1 ], ...face ].map( i => vertices[ i ] )
 
-{
-const { faces, vertices } = voronoiTesselation( points )
-
-
-const roads = []
-faces
-    .forEach( face =>
-        face.forEach((_,i) =>
-            roads.push( [ face[i], face[(i+1)%face.length] ] )
-        )
-    )
-
-roads
-.filter( ([a,b],i,arr) => !arr.slice(i+1).some( ([u,v]) => (u==a && v==b) || (u==b && v==a) ) )
-// .filter( () => Math.random() > 0.4 )
-.forEach( road => {
-    ctx.lineStyle='rgba(0,0,0,0.5)'
-    ctx.lineWidth=0.5
-    ctx.beginPath()
-    ctx.moveTo( vertices[ road[0] ].x, vertices[ road[0] ].y )
-    ctx.lineTo( vertices[ road[1] ].x, vertices[ road[1] ].y )
+    ctx.moveTo( u[0].x, u[0].y )
+    u.forEach( u => ctx.lineTo( u.x, u.y ) )
     ctx.stroke()
 })
 
+sinks.forEach( sink => {
+
+    ctx.beginPath()
+    ctx.fillStyle='#33d'
+    ctx.arc( vertices[sink].x, vertices[sink].y, 3, 0, Math.PI*2)
+    ctx.fill()
+})
+
+graph.forEach( ( arc, a ) =>
+    arc.forEach( b => {
+
+        ctx.beginPath()
+        ctx.strokeStyle='#33d'
+        ctx.lineWidth=0.1
+        ctx.moveTo( vertices[a].x, vertices[a].y )
+        ctx.lineTo( vertices[b].x, vertices[b].y )
+        ctx.stroke()
+    })
+)
+
+
+import pizza from 'ui/pizza'
+{
+    const ctx = document.getElementById('pizza').getContext('2d')
+    ctx.scale(5, 5)
+    pizza( ctx )
 }

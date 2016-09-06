@@ -25,7 +25,6 @@ describe('tesselation', function(){
 
         })
 
-        xit('should handle the case where a point is on an edge', function(){})
     })
 
     describe('Voronoi tesselation',function(){

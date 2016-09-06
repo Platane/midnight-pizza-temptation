@@ -27,7 +27,7 @@ describe('build exchange', function(){
     })
 
     afterEach(function(){
-        this.dom && this.dom.appendChild( createExchange( this.exchanges ) )
+        this.dom && this.exchanges.length && this.dom.appendChild( createExchange( this.exchanges ) )
     })
 
     afterEach(function( done ){
@@ -42,7 +42,7 @@ describe('build exchange', function(){
             done()
         }
     })
-    
+
     afterEach(function(){
         while(this.dom && this.dom.children.length)
             this.dom.removeChild(this.dom.children[0])
@@ -63,7 +63,6 @@ describe('build exchange', function(){
 
         this.exchanges = buildExchange( O )
 
-        expect( true ).toBe( true )
     })
 
     it('with "T" intersection 2', function(){
@@ -83,7 +82,6 @@ describe('build exchange', function(){
 
         this.exchanges = buildExchange( O )
 
-        expect( true ).toBe( true )
     })
 
     it('go throught', function(){
@@ -100,7 +98,6 @@ describe('build exchange', function(){
 
         this.exchanges = buildExchange( O )
 
-        expect( true ).toBe( true )
     })
 
     it('junction', function(){
@@ -120,7 +117,25 @@ describe('build exchange', function(){
         O.arcs_leaving  = [ arcs[1], arcs[3] ]
         O.arcs_entering = [ arcs[0], arcs[2] ]
         this.exchanges = buildExchange( O )
+    })
 
-        expect( true ).toBe( true )
+    it('complete three', function(){
+
+        const [ O, A, B, C ] = createNodes( 4 )
+
+        const arcs = [
+            { node_a: O,  node_b: A },
+            { node_a: O,  node_b: B },
+            { node_a: O,  node_b: C },
+
+            { node_a: A,  node_b: O },
+            { node_a: B,  node_b: O },
+            { node_a: C,  node_b: O },
+        ]
+
+        O.arcs_leaving  = [ arcs[0], arcs[1], arcs[2] ]
+        O.arcs_entering = [ arcs[3], arcs[4], arcs[5] ]
+        this.exchanges = buildExchange( O )
+
     })
 })

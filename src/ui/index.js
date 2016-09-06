@@ -88,9 +88,12 @@ const drawCarriers = ( network, carriers ) =>
 
             ctx.save()
             ctx.fillStyle = color( carrier )
+            ctx.strokeStyle = '#666'
+            ctx.lineWidth = 0.5
             ctx.beginPath()
             ctx.arc( p.x, p.y, 6, 0, Math.PI*2 )
             ctx.fill()
+            ctx.stroke()
             ctx.restore()
         })
 
