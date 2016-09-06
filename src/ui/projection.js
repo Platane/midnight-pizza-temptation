@@ -3,10 +3,6 @@ import bezier   from 'math/bezier'
 
 const bezierMarge = 12
 const marge = 5
-const node_r = 18
-const arrow_h = 4
-const arrow_l = 6
-const arrow_d = 5
 
 const onArc = ( arc, k ) => {
     const {node_a, node_b} = arc
@@ -64,4 +60,4 @@ const getCarrierPosition = carrier => {
 }
 
 
-module.exports = { getCarrierPosition }
+module.exports = { getCarrierPosition, carrierOnArc }

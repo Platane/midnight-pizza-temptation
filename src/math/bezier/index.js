@@ -5,3 +5,5 @@ const bezier = ( A, O, B, k ) => {
         y : A.y * _k * _k   +   2 * k * _k * O.y   +   k * k * B.y,
     }
 }
+
+module.exports = bezier

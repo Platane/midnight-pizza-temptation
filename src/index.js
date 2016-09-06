@@ -54,6 +54,7 @@ const loop = () => {
     drawCarriers( network, carriers )
 
     close( document.getElementById('close').getContext('2d'), 200, 200, carriers, network, carriers[0] )
+    close( document.getElementById('close2').getContext('2d'), 200, 200, carriers, network, carriers[1] )
 
     requestAnimationFrame( loop )
 }

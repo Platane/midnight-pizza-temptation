@@ -3,8 +3,8 @@ const ctx = document.getElementById('app').getContext('2d')
 import point                    from 'math/point'
 import {getCarrierAheadCarrier} from 'core/util/ahead'
 import {getCarrierPosition}     from './projection'
+import color                    from './color'
 
-const bezierMarge = 12
 const marge = 5
 const node_r = 18
 const arrow_h = 4
@@ -50,9 +50,6 @@ const drawNetwork = ({ nodes, arcs }) => {
 
 }
 
-const color = i =>
-    `hsl(${ ( i * 137 + i*i*37 ) % 360 }, 70%, 70%)`
-
 
 const drawCarriers = ( network, carriers ) =>
 
@@ -72,7 +69,7 @@ const drawCarriers = ( network, carriers ) =>
             const V = getCarrierPosition( v )
 
             ctx.save()
-            ctx.strokeStyle = color( u.index )
+            ctx.strokeStyle = color( u )
             ctx.lineWidth = w * 5
             ctx.globalAlpha = w
             ctx.beginPath()
@@ -90,7 +87,7 @@ const drawCarriers = ( network, carriers ) =>
             const p = getCarrierPosition( carrier )
 
             ctx.save()
-            ctx.fillStyle = color( carrier.index )
+            ctx.fillStyle = color( carrier )
             ctx.beginPath()
             ctx.arc( p.x, p.y, 6, 0, Math.PI*2 )
             ctx.fill()
@@ -99,8 +96,6 @@ const drawCarriers = ( network, carriers ) =>
 
 
 module.exports = {
-    onArc,
-    carrierOnArc,
     drawNetwork,
     drawCarriers,
     clear: () => ctx.clearRect(0,0,9999,9999),
