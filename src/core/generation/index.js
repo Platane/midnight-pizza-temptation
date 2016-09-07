@@ -171,10 +171,9 @@ module.exports = (options={}) => {
 
             const node = network.nodes.find( n => n.x == x && n.y == y )
 
-            return {
-                node,
-            }
+            return node ? { node } : null
         })
+        .filter( x => x )
 
     const max_distance = width*height/2
     const min_distance = width*height/9
@@ -188,9 +187,18 @@ module.exports = (options={}) => {
 
     network.endPoints = endPoints
 
+    // attribute value to each arc
+    network.nodes.forEach( x =>
+
+        x.arcs_leaving.forEach( (arc,i) => arc.weight = _network[ x.index ].weight[ i ] )
+
+    )
+
     return {
+        max_weight : network.arcs.reduce( (max,x) => Math.max( max, x.weight ), 0 ),
         perlin,
         faces,
+        trimed_faces : _faces,
         vertices,
         graph   : lightGraph,
         network,

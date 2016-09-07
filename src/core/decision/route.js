@@ -6,7 +6,7 @@ const choseNewRoute = ( network, carrier ) => {
 
     const endPoint = network.endPoints.find( x => x.node == currentNode )
 
-    const availableDestinations = ( endPoint && endPoint.reachables || network.endPoints ).map( x => x.node )
+    const availableDestinations = ( endPoint && endPoint.reachables.length && endPoint.reachables || network.endPoints ).map( x => x.node )
 
     const destination = availableDestinations[ Math.floor(Math.random() * availableDestinations.length) ]
 

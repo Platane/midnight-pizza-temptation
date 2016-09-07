@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: #aaa;
     padding: 2px 10px;
 }
 .ball{
@@ -11,15 +10,17 @@
     border-radius: 11px;
     border: solid 2px #fff;
     margin-right: 10px;
+    flex-shrink: 0;
 }
 .touchDown,
 .touch{
     width: 30px;
     height: 30px;
     border: solid 2px #fff;
-    transition: border-color 200ms;
+    transition: border-color 100ms;
     border-radius: 2px;
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .touchDown > .letter {
@@ -30,7 +31,7 @@
 }
 
 .letter{
-    transition: color 200ms;
+    transition: color 100ms;
     color: #fff;
     font-family: consolas;
     font-size: 20px;
