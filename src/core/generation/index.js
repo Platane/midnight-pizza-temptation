@@ -3,6 +3,7 @@ import {step as sstep}          from 'math/pointCloud'
 import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
 import {aStar}                  from 'math/graph'
 import {build}                  from 'math/graph/build'
+import point                    from 'math/point'
 
 
 const pointPerlinRepartition = ( perlin, width, height, n  ) => {
@@ -77,9 +78,15 @@ module.exports = (options={}) => {
     // generate voronoi tesselation
     let { faces, vertices } = voronoiTesselation( points )
 
+    // round vertices point
+    vertices.forEach( u => {
+        u.x = Math.round( u.x * 100 ) / 100
+        u.y = Math.round( u.y * 100 ) / 100
+    })
+
     const x = excludeOutOfMap( width, height, faces, vertices )
 
-    faces = x.faces
+    const _faces = x.faces
 
     // exclude vertices out of the map
 
@@ -90,7 +97,7 @@ module.exports = (options={}) => {
 
     // generate the graph from the voronoi graph,
     // and format it as such as it can be used in aStar
-    const graph = graphFromVoronoi( faces, vertices.length )
+    const graph = graphFromVoronoi( _faces, vertices.length )
         .map( ( arcs_leaving, index ) => ({ index, arcs_leaving }) )
 
     graph.forEach( node =>
@@ -153,14 +160,40 @@ module.exports = (options={}) => {
     // build links
     _network.forEach( (x,i) => x.links = x.links.map( n => n.index ) )
 
+    // build network
+    const network = build( _network )
 
+
+    // build end points from sinks
+    const endPoints = sinks
+        .map( i => {
+            const {x,y} = vertices[ i ]
+
+            const node = network.nodes.find( n => n.x == x && n.y == y )
+
+            return {
+                node,
+            }
+        })
+
+    const max_distance = width*height/2
+    const min_distance = width*height/9
+    endPoints.forEach( e =>
+        e.reachables = endPoints.filter( x => {
+            const d = point.sqrt_distance( x.node, e.node )
+            return min_distance < d && d < max_distance
+        })
+    )
+
+
+    network.endPoints = endPoints
 
     return {
-        sinks,
         perlin,
         faces,
         vertices,
         graph   : lightGraph,
-        network : build( _network ),
+        network,
+        endPoints,
     }
 }

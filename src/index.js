@@ -2,12 +2,13 @@ require('file?name=index.html!./index.html')
 
 import { drawNetwork, drawCarriers, clear }         from './ui'
 import { step }                                     from 'core/runner'
+import point                                        from 'math/point'
 
 import pizza from 'ui/pizza'
 {
     const ctx = document.getElementById('pizza').getContext('2d')
-    for(let x=14;x--;)
-    for(let y=9;y--;)
+    for(let x=15;x--;)
+    for(let y=10;y--;)
     {
         ctx.save()
         ctx.translate(100*x,100*y)
@@ -19,19 +20,14 @@ import pizza from 'ui/pizza'
 
 
 
-
-import { createExchange }         from './ui/exchange'
-
-// document.getElementById('exchanges').appendChild( createExchange( network.nodes[ 3 ].exchanges ) )
-
 import generateNetwork          from 'core/generation'
 
-const { perlin, vertices, faces, graph, sinks, network } = generateNetwork({
+const { perlin, vertices, faces, graph, network } = generateNetwork({
     width           : 700,
     height          : 700,
-    perlin_size     : 450,
-    n_points        : 100,
-    n_sinks         : 20,
+    perlin_size     : 250,
+    n_points        : 80,
+    n_sinks         : 10,
 })
 
 const ctx = document.getElementById('cloud').getContext('2d')
@@ -39,7 +35,7 @@ const r=5
 for(let x=700;x-=r;)
 for(let y=700;y-=r;){
 
-    ctx.fillStyle = `hsla( ${ perlin( x, y ) * 2 * 280 }, 90%, 60%, 0.04 )`
+    ctx.fillStyle = `hsla( ${ perlin( x, y ) * 2 * 280 }, 90%, 60%, 0.07 )`
     ctx.beginPath()
     ctx.rect( x, y, r, r )
     ctx.fill()
@@ -58,11 +54,11 @@ faces.forEach( face => {
     ctx.stroke()
 })
 
-sinks.forEach( sink => {
+network.endPoints.forEach( ({ node }) => {
 
     ctx.beginPath()
     ctx.fillStyle='#33d'
-    ctx.arc( vertices[sink].x, vertices[sink].y, 3, 0, Math.PI*2)
+    ctx.arc( node.x, node.y, 3, 0, Math.PI*2)
     ctx.fill()
 })
 
@@ -90,12 +86,12 @@ const info = {
 }
 
 
-const carriers = Array.from({ length: 50 })
+const carriers = Array.from({ length: 5 })
     .map((_,i) =>
         ({
             position : {
-                arc         : network.arcs[ i % network.arcs.length ],
-                k           : Math.random(),
+                arc         : network.endPoints[ i % network.endPoints.length ].node.arcs_leaving[0],
+                k           : 0.9,
                 velocity    : 0,
             },
             decision : {
@@ -103,10 +99,18 @@ const carriers = Array.from({ length: 50 })
             },
             info    : { ...info, maxVelocity: 1 + Math.random()},
             index   : i,
+            game    : { score: 0 },
         })
     )
 
-import { close } from 'ui/close'
+require('core/player')( carriers )
+
+import { close }            from 'ui/close'
+import createPlayerDeck     from 'ui/playerDeck'
+
+const playerDeck = createPlayerDeck( carriers )
+
+document.getElementById('playerDeck').appendChild( playerDeck.dom )
 
 const loop = () => {
 
@@ -115,6 +119,8 @@ const loop = () => {
     clear()
     drawNetwork( network )
     drawCarriers( network, carriers )
+
+    playerDeck.update()
 
     close( document.getElementById('close').getContext('2d'), 200, 200, carriers, network, carriers[0] )
     close( document.getElementById('close2').getContext('2d'), 200, 200, carriers, network, carriers[1] )

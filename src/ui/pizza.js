@@ -12,29 +12,21 @@ module.exports = ( ctx, seed, color ) => {
     const color_crust           = '#b58a1c'
     const color_base            = '#df8d34'
 
-
-
-
-    ctx.beginPath()
-    ctx.fillStyle='#eee'
-    ctx.rect(0,0,100,100)
-    ctx.fill()
-
     const keys = [
 
         // crust
 
         // up crust
-        [2 , 20],
-        [33, 5 ],
-        [66, 5 ],
+        [7 , 20],
+        [33, 7 ],
+        [66, 7 ],
         [95, 20],
 
         // down crust
-        [93, 30],
+        [91, 30],
         [66, 18],
         [33, 18],
-        [7 , 30],
+        [10, 30],
 
         // cone
         [80, 45],
@@ -66,9 +58,9 @@ module.exports = ( ctx, seed, color ) => {
     ctx.fillStyle=color_crust
     path( ctx, [
         m[6],
-        ...[ ...m.slice(6,9), m[0] ].map( a => [ a[0]-4, a[1] ] ),
+        ...[ ...m.slice(6,9), m[0] ].map( a => [ a[0]-5, a[1] ] ),
         keys[0],
-        [50,50],
+        [50,20],
     ])
 
     ctx.fill()
@@ -132,5 +124,19 @@ module.exports = ( ctx, seed, color ) => {
     ctx.fillStyle=color_crust
     path( ctx, keys.slice(0,8) )
     ctx.fill()
+
+
+    ctx.beginPath()
+    ctx.lineCap='round'
+    ctx.strokeStyle='#444'
+    path( ctx, [
+        ...keys.slice(0,4),
+        m[3],
+        ...keys.slice(8,11),
+        ...[ ...m.slice(6,9), m[0] ].map( a => [ a[0]-5, a[1] ] ),
+        keys[0],
+    ])
+    ctx.lineWidth=1.5
+    ctx.stroke()
 
 }

@@ -1,9 +1,8 @@
 
 import { computeAcceleration }  from 'core/decision/acceleration'
 import { choseNewRoute }        from 'core/decision/route'
-import { getAcceleration }      from 'controller'
 
-const step = ( network, carriers ) =>
+const step = ( network, carriers, players ) =>
 
     // let say the state at N+1 is not quite distinguable from the state at N
     carriers
@@ -13,8 +12,12 @@ const step = ( network, carriers ) =>
             if ( carrier.position.k >=1 ) {
 
                 // get new route if this one is over
-                if ( carrier.decision.path.length == 0 )
+                if ( carrier.decision.path.length == 0 ) {
+
+                    carrier.game.score ++
+
                     choseNewRoute( network, carrier )
+                }
 
                 // next arc
                 const next_node = carrier.decision.path.shift()
@@ -24,8 +27,9 @@ const step = ( network, carriers ) =>
                 carrier.position.k      = 0
             }
 
-            const acc = carrier.index == 0 && false
-                ? getAcceleration() ? carrier.info.maxAcc : -carrier.info.maxBrake
+            // if the carrier have a control field, take the acceleration from there, otherwise compute it
+            const acc = carrier.control
+                ? Math.min(carrier.info.maxAcc, Math.max(-carrier.info.maxBrake, carrier.control.acceleration))
                 : computeAcceleration( carriers, carrier )
 
             // compute the acceleration
