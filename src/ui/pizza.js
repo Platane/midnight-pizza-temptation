@@ -10,16 +10,13 @@ const path = ( ctx, arr ) => {
 module.exports = ( ctx, seed, color ) => {
 
     const color_crust           = '#b58a1c'
-    const color_base            = '#d89a46'
+    const color_base            = '#df8d34'
 
 
 
-    ctx.globalAlpha = 1.5
-    ctx.strokeStyle = '#333'
-    ctx.lineWidth = 0.5
 
     ctx.beginPath()
-    ctx.fillStyle='#ddd'
+    ctx.fillStyle='#eee'
     ctx.rect(0,0,100,100)
     ctx.fill()
 
@@ -50,8 +47,14 @@ module.exports = ( ctx, seed, color ) => {
         [34, 37],
         [57, 87],
         [67, 57],
+
+        // vegetable
+        [39, 26],
+        [64, 29],
+        [37, 84],
+        [47, 67],
     ]
-        .map( a => a.map( x => x+ ( Math.random() - 0.5 ) * 10 ) )
+        .map( a => a.map( x => x+ ( Math.random() - 0.5 ) * 12 ) )
 
 
     const m = [
@@ -69,37 +72,59 @@ module.exports = ( ctx, seed, color ) => {
     ])
 
     ctx.fill()
-    ctx.stroke()
 
     ctx.beginPath()
     ctx.fillStyle=color_base
     path( ctx, m )
     ctx.fill()
-    ctx.stroke()
 
     ctx.save()
     ctx.beginPath()
     path( ctx, m )
     ctx.clip()
 
-    const radius = Math.random() * 5 + 10
-    const r = Math.random()*220 + 310
-    const color_pepperoniShadow = `hsl(${r},80%,30%)`
-    const color_pepperoni       = `hsl(${r},90%,35%)`
-    keys.slice(-3).forEach( ([x,y]) => {
+    const r_pepperoni = Math.random()*70 + 335
+    const r_vege      = Math.random()*120 + 45
 
-        ctx.beginPath()
-        ctx.fillStyle=color_pepperoniShadow
-        ctx.arc( x-3, y, radius+0.5 , 0, Math.PI*2 )
-        ctx.fill()
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.fillStyle=color_pepperoni
-        ctx.arc( x, y, radius , 0, Math.PI*2 )
-        ctx.fill()
-        ctx.stroke()
 
-    })
+    {
+        const radius = Math.random() * 5 + 10
+        const color_pepperoniShadow = `hsl(${r_pepperoni},80%,30%)`
+        const color_pepperoni       = `hsl(${r_pepperoni},90%,35%)`
+        keys.slice(-7,-4).forEach( ([x,y]) => {
+
+            ctx.beginPath()
+            ctx.fillStyle=color_pepperoniShadow
+            ctx.arc( x-3, y, radius+0.5 , 0, Math.PI*2 )
+            ctx.fill()
+            ctx.beginPath()
+            ctx.fillStyle=color_pepperoni
+            ctx.arc( x, y, radius , 0, Math.PI*2 )
+            ctx.fill()
+
+        })
+    }
+
+    {
+        const radius = Math.random() * 8 + 5
+        const color_vegeShadow = `hsl(${r_vege},85%,30%)`
+        const color_vege       = `hsl(${r_vege},95%,35%)`
+        keys.slice(-4).forEach( ([x,y]) => {
+
+            const u=Math.random()*6
+
+            ctx.beginPath()
+            ctx.fillStyle=color_vegeShadow
+            ctx.arc( x-3, y, radius+0.5 , u, u+Math.PI )
+            ctx.fill()
+            ctx.beginPath()
+            ctx.fillStyle=color_vege
+            ctx.arc( x, y, radius , u, u+Math.PI )
+            ctx.fill()
+
+        })
+    }
+
 
     ctx.restore()
 
@@ -107,8 +132,5 @@ module.exports = ( ctx, seed, color ) => {
     ctx.fillStyle=color_crust
     path( ctx, keys.slice(0,8) )
     ctx.fill()
-    ctx.stroke()
-
-
 
 }

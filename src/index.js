@@ -7,7 +7,7 @@ import pizza from 'ui/pizza'
 {
     const ctx = document.getElementById('pizza').getContext('2d')
     for(let x=14;x--;)
-    for(let y=6;y--;)
+    for(let y=9;y--;)
     {
         ctx.save()
         ctx.translate(100*x,100*y)
