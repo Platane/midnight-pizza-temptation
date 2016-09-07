@@ -5,10 +5,10 @@ import {getCarrierAheadCarrier} from 'core/util/ahead'
 import {getCarrierPosition}     from './projection'
 import color                    from './color'
 
-const marge = 5
-const node_r = 18
-const arrow_h = 4
-const arrow_l = 6
+const marge = 2.5
+const node_r = 0.5
+const arrow_h = 1
+const arrow_l = 1.2
 const arrow_d = 5
 const drawNetwork = ({ nodes, arcs }) => {
 
@@ -21,6 +21,7 @@ const drawNetwork = ({ nodes, arcs }) => {
 
         ctx.save()
         ctx.fillStyle = ctx.strokeStyle = '#ccc'
+        ctx.lineWidth = 0.5
 
         ctx.beginPath()
         ctx.moveTo( node_a.x + n.y/l*marge + n.x/l*node_r, node_a.y - n.x/l*marge + n.y/l*node_r )
@@ -89,9 +90,9 @@ const drawCarriers = ( network, carriers ) =>
             ctx.save()
             ctx.fillStyle = color( carrier )
             ctx.strokeStyle = '#666'
-            ctx.lineWidth = 0.5
+            ctx.lineWidth = 0.1
             ctx.beginPath()
-            ctx.arc( p.x, p.y, 6, 0, Math.PI*2 )
+            ctx.arc( p.x, p.y, 3, 0, Math.PI*2 )
             ctx.fill()
             ctx.stroke()
             ctx.restore()

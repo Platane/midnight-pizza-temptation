@@ -1,8 +1,8 @@
 import point    from 'math/point'
 import bezier   from 'math/bezier'
 
-const bezierMarge = 12
-const marge = 5
+const bezierMarge = 5
+const marge = 2.5
 
 const onArc = ( arc, k ) => {
     const {node_a, node_b} = arc

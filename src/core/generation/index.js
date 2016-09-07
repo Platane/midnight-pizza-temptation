@@ -1,7 +1,8 @@
-import {createPerlin}   from 'math/perlin'
-import {step as sstep}  from 'math/pointCloud'
+import {createPerlin}           from 'math/perlin'
+import {step as sstep}          from 'math/pointCloud'
 import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
 import {aStar}                  from 'math/graph'
+import {build}                  from 'math/graph/build'
 
 
 const pointPerlinRepartition = ( perlin, width, height, n  ) => {
@@ -38,6 +39,19 @@ const graphFromVoronoi = ( faces, n ) => {
     return graph.map( arc => arc.filter( (x,i,arr) => arr.indexOf( x ) == i ) )
 }
 
+const excludeOutOfMap = ( width, height, faces, vertices ) => {
+    const out = {}
+    vertices.forEach( (p,i) => {
+        if ( p.x < 0 || p.x > width || p.y < 0 || p.y > height )
+            out[i] = true
+    })
+    faces = faces.filter( face => !face.some( x => out[ x ] ) )
+
+    return {
+        faces,
+        out,
+    }
+}
 
 
 module.exports = (options={}) => {
@@ -61,11 +75,18 @@ module.exports = (options={}) => {
         sstep( points, [], width, height )
 
     // generate voronoi tesselation
-    const { faces, vertices } = voronoiTesselation( points )
+    let { faces, vertices } = voronoiTesselation( points )
+
+    const x = excludeOutOfMap( width, height, faces, vertices )
+
+    faces = x.faces
+
+    // exclude vertices out of the map
 
     // pick N sinks
     const sinks = Array.from({ length: n_sinks })
         .map( () => Math.floor( Math.random() * vertices.length ) )
+        .filter( i => !x.out[i] )
 
     // generate the graph from the voronoi graph,
     // and format it as such as it can be used in aStar
@@ -84,7 +105,7 @@ module.exports = (options={}) => {
     const w = () => 1
 
     for( let a=sinks.length; a--; )
-    for( let b=a; b--; )
+    for( let b=sinks.length; b--; )
     {
         const path = aStar( graph[ sinks[a] ], graph[ sinks[b] ], w )
 
@@ -97,14 +118,49 @@ module.exports = (options={}) => {
 
             lightGraph[ a.index ].push( b.index )
         })
-
     }
+
+    // build the network
+    let _network = lightGraph
+        .map( (_,i) => ({ ...vertices[ i ], live:false }) )
+
+    lightGraph.forEach( (arc,i) => {
+
+        const links = arc
+            .filter( (k,i,arr) => arc.indexOf(k) == i )
+
+        links.forEach( k => _network[k].live = true )
+
+        const weight={}
+        arc.forEach( k => weight[k] = (0|weight[k]) + 1 )
+
+
+        _network[ i ].weight = links.map( k => weight[k] )
+
+        _network[ i ].links = links.map( j => _network[ j ] )
+
+        _network[ i ].live = _network[ i ].live || links.length>0
+
+    })
+
+    // trim node with no links
+    _network = _network
+        .filter( ({ live }) => live )
+
+    // attribute index
+    _network.forEach( (x,i) => x.index = i )
+
+    // build links
+    _network.forEach( (x,i) => x.links = x.links.map( n => n.index ) )
+
+
 
     return {
         sinks,
         perlin,
         faces,
         vertices,
-        graph : lightGraph,
+        graph   : lightGraph,
+        network : build( _network ),
     }
 }

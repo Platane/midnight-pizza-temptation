@@ -24,7 +24,7 @@ const step = ( network, carriers ) =>
                 carrier.position.k      = 0
             }
 
-            const acc = carrier.index == 0
+            const acc = carrier.index == 0 && false
                 ? getAcceleration() ? carrier.info.maxAcc : -carrier.info.maxBrake
                 : computeAcceleration( carriers, carrier )
 

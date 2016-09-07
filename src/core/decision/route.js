@@ -5,7 +5,7 @@ const choseNewRoute = ( network, carrier ) => {
     const currentNode = carrier.position.arc.node_b
 
     const availableDestinations = network.nodes
-        .slice( 0, 2 )
+        .slice( 0, -1 )
         .filter( x => x != currentNode )
 
     const destination = availableDestinations[ Math.floor(Math.random() * availableDestinations.length) ]

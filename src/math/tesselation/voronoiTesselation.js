@@ -1,5 +1,3 @@
-import p                        from 'math/point'
-import line                     from 'math/line'
 import {circonscritCircle, delaunayTriangulation}      from './delaunayTriangulation'
 
 const voronoiTesselation = ( points ) => {
@@ -19,6 +17,9 @@ const voronoiTesselation = ( points ) => {
                 if ( vertices.some( x => i == x ) )
                     edges.push( [ ...vertices.filter( x => i != x ), k ] )
             })
+
+        if ( edges.length == 0 )
+            return
 
         let [ a, e, k ] = edges.shift()
         const hull = [ k ]
