@@ -63,7 +63,7 @@ const { perlin, vertices, faces, graph, sinks } = generateNetwork({
     width           : 700,
     height          : 700,
     perlin_size     : 280,
-    n_points        : 700,
+    n_points        : 70,
     n_sinks         : 20,
 })
 
@@ -115,6 +115,13 @@ graph.forEach( ( arc, a ) =>
 import pizza from 'ui/pizza'
 {
     const ctx = document.getElementById('pizza').getContext('2d')
-    ctx.scale(5, 5)
-    pizza( ctx )
+    for(let x=14;x--;)
+    for(let y=6;y--;)
+    {
+        ctx.save()
+        ctx.translate(100*x,100*y)
+        // ctx.scale(7,7)
+        pizza( ctx )
+        ctx.restore()
+    }
 }

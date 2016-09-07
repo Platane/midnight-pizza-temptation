@@ -1,6 +1,5 @@
 import {createPerlin}   from 'math/perlin'
 import {step as sstep}  from 'math/pointCloud'
-import {delaunayTriangulation}  from 'math/tesselation/delaunayTriangulation'
 import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
 import {aStar}                  from 'math/graph'
 
@@ -89,7 +88,7 @@ module.exports = (options={}) => {
     {
         const path = aStar( graph[ sinks[a] ], graph[ sinks[b] ], w )
 
-        path.forEach( (a,i,arr) => {
+        path && path.forEach( (a,i,arr) => {
 
             const b = arr[i-1]
 
