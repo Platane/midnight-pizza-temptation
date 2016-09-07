@@ -2,9 +2,8 @@ import point    from 'math/point'
 import bezier   from 'math/bezier'
 
 const bezierMarge = 5
-const marge = 2.5
 
-const onArc = ( arc, k ) => {
+const onArc = ( arc, k, marge=0 ) => {
     const {node_a, node_b} = arc
 
     const n = point.sub( node_b, node_a )
@@ -22,7 +21,7 @@ const carrierOnArc = ({ position }) =>
     onArc( position.arc, position.k )
 
 const _cache = {}
-const getCarrierPosition = carrier => {
+const getCarrierPosition = ( carrier, marge ) => {
 
     const distanceToEnd     = ( 1-carrier.position.k ) * carrier.position.arc.length
     const distanceToStart   = carrier.position.k * carrier.position.arc.length
@@ -35,9 +34,9 @@ const getCarrierPosition = carrier => {
             const arcB = carrier.position.arc.node_b.arcs_leaving.find( x => x.node_b == carrier.decision.path[0] )
 
             _cache[ carrier.index ] = {
-                A : onArc( arcA, 1 - bezierMarge / arcA.length ),
+                A : onArc( arcA, 1 - bezierMarge / arcA.length, marge ),
                 O : carrier.position.arc.node_b,
-                B : onArc( arcB, bezierMarge / arcB.length ),
+                B : onArc( arcB, bezierMarge / arcB.length, marge ),
             }
         }
 

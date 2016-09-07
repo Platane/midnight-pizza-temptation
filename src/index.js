@@ -75,16 +75,11 @@ const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = ge
 
 import 'ui/app'
 import paintMap              from 'ui/map'
+import paintCarrier     from 'ui/carrier'
 // import { drawNetwork, drawCarriers, clear }         from './ui'
 import { step }                                     from 'core/runner'
 
-const { update:update_map, static_canvas, dynamic_canvas } = paintMap( 700, 700, 2, network, trimed_faces, vertices, perlin, max_weight )
 
-static_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
-dynamic_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
-
-document.getElementById('map').appendChild( static_canvas )
-document.getElementById('map').appendChild( dynamic_canvas )
 
 const info = {
     maxAcc      : 0.05,         // px . frame^-2
@@ -112,8 +107,21 @@ const carriers = Array.from({ length: 16 })
 
 require('core/player')( carriers )
 
-import { close }            from 'ui/close'
 import createPlayerDeck     from 'ui/playerDeck'
+
+
+const { update:update_map, static_canvas, dynamic_canvas }  = paintMap( 700, 700, 2, network, trimed_faces, vertices, perlin, max_weight )
+const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( 700, 700, carriers )
+
+static_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
+dynamic_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
+carrier_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
+
+document.getElementById('map').appendChild( static_canvas )
+document.getElementById('map').appendChild( dynamic_canvas )
+document.getElementById('map').appendChild( carrier_canvas )
+
+
 
 const playerDeck = createPlayerDeck( carriers )
 
@@ -124,6 +132,7 @@ const loop = () => {
     step( network, carriers )
 
     update_map()
+    update_carrier()
 
     // clear()
     // drawNetwork( network )
