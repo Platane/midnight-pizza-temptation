@@ -62,7 +62,7 @@ module.exports = ( width, height, resolution, network, faces, vertices, perlin, 
     perlin_canvas.width  = width
     perlin_canvas.height = height
     const perlin_ctx = perlin_canvas.getContext('2d')
-    paintPerlin( perlin_ctx, width, height, perlin, 0.25, 68 )
+    paintPerlin( perlin_ctx, width, height, perlin, 0.24, 68 )
 
     static_ctx.save()
     static_ctx.globalCompositeOperation = 'overlay'

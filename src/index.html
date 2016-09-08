@@ -1,10 +1,17 @@
 <html>
-
+<style>
+#app{display:flex;flex-direction:row;align-items:stretch;}
+#map{display: flex;align-items: center;justify-content: center;}
+#map_{flex-grow:1;}
+#playerDeck{width:300px;height:100%;background-color:#eee;margin-right:10px;box-shadow:0 0 18px #000}
+</style>
 <body style="margin:0">
 
-<div id="app" style="display:flex;flex-direction:row;align-items:stretch;">
-    <div id="playerDeck" style="width:300px;height:100%;background-color:#eee;margin-right:10px;box-shadow:0 0 18px #000"></div>
-    <div id="map"></div>
+<div id="app">
+    <div id="playerDeck"></div>
+    <div id="map_">
+        <div id="map"></div>
+    </div>
 </div>
 
 <div style="display:flex;flex-direction:row">

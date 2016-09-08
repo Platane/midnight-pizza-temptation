@@ -20,64 +20,26 @@ require('file?name=index.html!./index.html')
 
 import generateNetwork          from 'core/generation'
 
+const dom_map = document.getElementById('map')
+
+const x = document.getElementById('map_').getBoundingClientRect()
+
+const width     = Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 1000 )
+const height    = width
+
 const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = generateNetwork({
-    width           : 700,
-    height          : 700,
+    width,
+    height,
     perlin_size     : 350,
     n_points        : 380,
     n_sinks         : 16,
 })
 
 
-// const r=5
-// for(let x=700;x-=r;)
-// for(let y=700;y-=r;){
-//
-//     ctx.fillStyle = `hsla( ${ perlin( x, y ) * 2 * 280 }, 90%, 60%, 0.07 )`
-//     ctx.beginPath()
-//     ctx.rect( x, y, r, r )
-//     ctx.fill()
-// }
-
-// trimed_faces.forEach( face => {
-//
-//     ctx.beginPath()
-//     ctx.strokeStyle='rgba(0,0,0,0.3)'
-//     ctx.lineWidth=0.2
-//
-//     const u = [ face[ face.length-1 ], ...face ].map( i => vertices[ i ] )
-//
-//     ctx.moveTo( u[0].x, u[0].y )
-//     u.forEach( u => ctx.lineTo( u.x, u.y ) )
-//     ctx.stroke()
-// })
-//
-// network.endPoints.forEach( ({ node }) => {
-//
-//     ctx.beginPath()
-//     ctx.fillStyle='#33d'
-//     ctx.arc( node.x, node.y, 3, 0, Math.PI*2)
-//     ctx.fill()
-// })
-//
-// graph.forEach( ( arc, a ) =>
-//     arc.forEach( b => {
-//
-//         ctx.beginPath()
-//         ctx.strokeStyle='#33d'
-//         ctx.lineWidth=0.1
-//         ctx.moveTo( vertices[a].x, vertices[a].y )
-//         ctx.lineTo( vertices[b].x, vertices[b].y )
-//         ctx.stroke()
-//     })
-// )
-//
-
 import 'ui/app'
-import paintMap              from 'ui/map'
-import paintCarrier     from 'ui/carrier'
-// import { drawNetwork, drawCarriers, clear }         from './ui'
-import { step }                                     from 'core/runner'
+import paintMap             from 'ui/map'
+import paintCarrier         from 'ui/carrier'
+import { step }             from 'core/runner'
 
 
 
@@ -110,16 +72,16 @@ require('core/player')( carriers )
 import createPlayerDeck     from 'ui/playerDeck'
 
 
-const { update:update_map, static_canvas, dynamic_canvas }  = paintMap( 700, 700, 2, network, trimed_faces, vertices, perlin, max_weight )
-const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( 700, 700, carriers )
+const { update:update_map, static_canvas, dynamic_canvas }  = paintMap( width, height, 2, network, trimed_faces, vertices, perlin, max_weight )
+const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( width, height, carriers )
 
-static_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
-dynamic_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
-carrier_canvas.setAttribute('style','position:absolute;width:700px;height:700px')
+static_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+dynamic_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+carrier_canvas.setAttribute('style',`position:relative;`)
 
-document.getElementById('map').appendChild( static_canvas )
-document.getElementById('map').appendChild( dynamic_canvas )
-document.getElementById('map').appendChild( carrier_canvas )
+dom_map.appendChild( static_canvas )
+dom_map.appendChild( dynamic_canvas )
+dom_map.appendChild( carrier_canvas )
 
 
 
