@@ -1,31 +1,18 @@
 <html>
 <style>
+body{margin:0}
 #app{display:flex;flex-direction:row;align-items:stretch;}
 #map{display: flex;align-items: center;justify-content: center;}
 #map_{flex-grow:1;}
-#playerDeck{width:300px;height:100%;background-color:#eee;margin-right:10px;box-shadow:0 0 18px #000}
+#playerDeck{width:300px;height:100%;background-color:#eee;margin-right:10px;box-shadow:0 0 38px #000}
 </style>
-<body style="margin:0">
 
 <div id="app">
     <div id="playerDeck"></div>
     <div id="map_">
-        <div id="map"></div>
+        <div id="map"><h1>Please wait while generating map ...</h1></div>
     </div>
 </div>
-
-<div style="display:flex;flex-direction:row">
-    <div style="display:flex;flex-direction:column;width:220px;">
-        <canvas id="close" width="200" height="200" style="margin:10px;border:solid 2px #333"></canvas>
-        <canvas id="close2" width="200" height="200" style="margin:10px;border:solid 2px #333"></canvas>
-    </div>
-    <canvas id="app" width="700" height="700" style="margin:50px"></canvas>
-</div>
-
-<canvas id="pizza" width="1500" height="1000" style="margin:50px"></canvas>
-
-
 
 <script src="./index.js"></script>
-</body>
 </html>

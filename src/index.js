@@ -31,8 +31,8 @@ const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = ge
     width,
     height,
     perlin_size     : 350,
-    n_points        : 380,
-    n_sinks         : 16,
+    n_points        : 80,
+    n_sinks         : 6,
 })
 
 
@@ -63,7 +63,7 @@ const carriers = Array.from({ length: 16 })
             },
             info    : { ...info, maxVelocity: 1 + Math.random()},
             index   : i,
-            game    : { score: 0 },
+            game    : { score: -1 },
         })
     )
 
@@ -78,6 +78,9 @@ const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( widt
 static_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
 dynamic_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
 carrier_canvas.setAttribute('style',`position:relative;`)
+
+while( dom_map.children[0] )
+    dom_map.removeChild( dom_map.children[0] )
 
 dom_map.appendChild( static_canvas )
 dom_map.appendChild( dynamic_canvas )

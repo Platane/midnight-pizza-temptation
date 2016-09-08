@@ -109,7 +109,7 @@ module.exports = (options={}) => {
 
 
     const lightGraph = Array.from( vertices ).map( () => [] )
-    const w = () => 1
+    const w = arc => point.length(arc.node_a,arc.node_b)
 
     for( let a=sinks.length; a--; )
     for( let b=sinks.length; b--; )
@@ -124,6 +124,7 @@ module.exports = (options={}) => {
                 return
 
             lightGraph[ a.index ].push( b.index )
+            lightGraph[ b.index ].push( a.index )
         })
     }
 
