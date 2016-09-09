@@ -1,0 +1,10 @@
+.cam{
+    overflow: hidden;
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.4);
+    margin: 10px;
+    border-left: 8px solid #fff;
+}
+.list{
+    display: flex;
+    flex-direction: column;
+}

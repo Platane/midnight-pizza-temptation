@@ -2,19 +2,19 @@ require('file?name=index.html!./index.html')
 
 
 
-// import pizza from 'ui/pizza'
-// {
-//     const ctx = document.getElementById('pizza').getContext('2d')
-//     for(let x=15;x--;)
-//     for(let y=10;y--;)
-//     {
-//         ctx.save()
-//         ctx.translate(100*x,100*y)
-//         // ctx.scale(7,7)
-//         pizza( ctx )
-//         ctx.restore()
-//     }
-// }
+import pizza from 'ui/pizza'
+{
+    const ctx = document.getElementById('pizza').getContext('2d')
+    for(let x=15;x--;)
+    for(let y=10;y--;)
+    {
+        ctx.save()
+        ctx.translate(100*x,100*y)
+        // ctx.scale(7,7)
+        pizza( ctx )
+        ctx.restore()
+    }
+}
 
 
 
@@ -36,8 +36,6 @@ const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = ge
 })
 
 
-import 'ui/app'
-import paintMap             from 'ui/map'
 import paintCarrier         from 'ui/carrier'
 import { step }             from 'core/runner'
 
@@ -70,43 +68,55 @@ const carriers = Array.from({ length: 16 })
 require('core/player')( carriers )
 
 import createPlayerDeck     from 'ui/playerDeck'
+import createCamList        from 'ui/closeCam/list'
 
+const backgrounds = {
 
-const { update:update_map, static_canvas, dynamic_canvas }  = paintMap( width, height, 2, network, trimed_faces, vertices, perlin, max_weight )
+    night           : require('ui/background/night')( width, height, 2, trimed_faces, vertices, perlin ),
+
+    roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 2 ),
+
+    roads_precise   : require('ui/background/roads')( width, height, 2, network, max_weight, 2, 3 ),
+}
+
 const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( width, height, carriers )
 
-static_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
-dynamic_canvas.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
-carrier_canvas.setAttribute('style',`position:relative;`)
+backgrounds.night.s.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+backgrounds.night.d.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+backgrounds.roads_large.s.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+backgrounds.roads_large.d.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
+carrier_canvas.setAttribute('style',`position:relative;width:${ width }px;height:${ height }px`)
 
 while( dom_map.children[0] )
     dom_map.removeChild( dom_map.children[0] )
 
-dom_map.appendChild( static_canvas )
-dom_map.appendChild( dynamic_canvas )
+dom_map.appendChild( backgrounds.night.s )
+dom_map.appendChild( backgrounds.night.d )
+dom_map.appendChild( backgrounds.roads_large.s )
+dom_map.appendChild( backgrounds.roads_large.d )
 dom_map.appendChild( carrier_canvas )
 
 
 
-const playerDeck = createPlayerDeck( carriers )
 
+const playerDeck = createPlayerDeck( carriers )
 document.getElementById('playerDeck').appendChild( playerDeck.dom )
+
+const camList    = createCamList( carriers, network, backgrounds, 2, 3 )
+document.getElementById('camlist').appendChild( camList.dom )
 
 const loop = () => {
 
+    backgrounds.night.u()
+    backgrounds.roads_large.u()
+    backgrounds.roads_precise.u()
+
     step( network, carriers )
 
-    update_map()
     update_carrier()
 
-    // clear()
-    // drawNetwork( network )
-    // drawCarriers( network, carriers )
-
     playerDeck.update()
-
-    // close( document.getElementById('close').getContext('2d'), 200, 200, carriers, network, carriers[0] )
-    // close( document.getElementById('close2').getContext('2d'), 200, 200, carriers, network, carriers[1] )
+    camList.update()
 
     requestAnimationFrame( loop )
 }

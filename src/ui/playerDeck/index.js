@@ -1,13 +1,7 @@
-import style    from './style.css'
-import color    from 'ui/color'
-import pizza    from 'ui/pizza'
-
-const create = ( className, type ) => {
-    const dom = document.createElement( type || 'div')
-    dom.setAttribute('class', className )
-    return dom
-}
-
+import style        from './style.css'
+import color        from 'ui/color'
+import pizza        from 'ui/pizza'
+import {create}     from 'ui/dom'
 
 const createPlayer = ( player ) => {
 
@@ -25,7 +19,7 @@ const createPlayer = ( player ) => {
     dom.appendChild( touch )
 
     const scoreCanvas = create( style.score, 'canvas' )
-    scoreCanvas.width = 260
+    scoreCanvas.width = 460
     scoreCanvas.height = 50
     dom.appendChild( scoreCanvas )
 
