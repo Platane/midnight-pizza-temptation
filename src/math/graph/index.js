@@ -66,7 +66,7 @@ const aStar = ( node_start, node_end, compute_w ) => {
 
         closeList[ e.node.index ] = true
 
-        openList = openList.sort( (a,b) => a.f < b.f ? 1 : -1 )
+        openList = openList.sort( (a,b) => a.f > b.f ? 1 : -1 )
     }
 
 }

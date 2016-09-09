@@ -24,7 +24,7 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
     // draw graph
     static_ctx.save()
     network.arcs
-        .filter( ({ node_a, node_b }) => node_a.index < node_b.index )
+        // .filter( ({ node_a, node_b }) => node_a.index < node_b.index )
         .forEach( ({ node_a, node_b, weight }) => drawGlowing( static_ctx, node_a, node_b, color_road, weight/max_weight ) )
     static_ctx.restore()
 

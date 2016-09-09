@@ -31,7 +31,7 @@ const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = ge
     width,
     height,
     perlin_size     : 350,
-    n_points        : 60,
+    n_points        : 160,
     n_sinks         : 16,
 })
 
