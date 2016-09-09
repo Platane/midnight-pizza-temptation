@@ -15,8 +15,8 @@ const onArc = ( arc, k, marge=0 ) => {
     }
 }
 
-const carrierOnArc = ({ position }) =>
-    onArc( position.arc, position.k )
+const carrierOnArc = ({ position }, marge) =>
+    onArc( position.arc, position.k, marge )
 
 const _cache = {}
 const getCarrierPosition = ( carrier, marge, bezierMarge ) => {
@@ -52,7 +52,7 @@ const getCarrierPosition = ( carrier, marge, bezierMarge ) => {
 
         _cache[ carrier.index ] = null
 
-        return carrierOnArc( carrier )
+        return carrierOnArc( carrier, marge )
     }
 }
 

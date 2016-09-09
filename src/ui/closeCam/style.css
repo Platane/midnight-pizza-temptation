@@ -1,8 +1,9 @@
 .cam{
     overflow: hidden;
-    box-shadow: 0 0 3px 0 rgba(0,0,0,0.4);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.4);
     margin: 10px;
     border-left: 8px solid #fff;
+    border-radius: 2px;
 }
 .list{
     display: flex;

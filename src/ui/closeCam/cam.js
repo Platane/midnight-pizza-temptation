@@ -50,7 +50,7 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
         // draw carrier
         carriers.forEach( carrier => {
 
-            const p = getCarrierPosition( carrier, marge, 2 )
+            const p = getCarrierPosition( carrier, marge, margeBezier )
 
             ctx.beginPath()
             ctx.fillStyle = color( carrier )

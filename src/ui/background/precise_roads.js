@@ -1,4 +1,5 @@
 
+import point                    from 'math/point'
 import paintPerlin              from 'ui/perlin'
 import drawGlowing              from 'ui/base/glow_line'
 import {create}                 from 'ui/dom'
@@ -22,10 +23,36 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
 
 
     // draw graph
+
     static_ctx.save()
     network.arcs
-        .filter( ({ node_a, node_b }) => node_a.index < node_b.index )
-        .forEach( ({ node_a, node_b, weight }) => drawGlowing( static_ctx, node_a, node_b, color_road, weight/max_weight ) )
+        .forEach( ({ node_a, node_b, weight }) => {
+
+            const n = point.sub( node_b, node_a )
+            const l = point.length( n )
+
+            if ( l< margeBezier )
+                return
+
+            n.x /= l
+            n.y /= l
+
+            const a = {
+                x : node_a.x + n.x * margeBezier + n.y * marge,
+                y : node_a.y + n.y * margeBezier - n.x * marge,
+            }
+            const b = {
+                x : node_b.x - n.x * margeBezier + n.y * marge,
+                y : node_b.y - n.y * margeBezier - n.x * marge,
+            }
+
+            static_ctx.strokeStyle    = color_road
+            static_ctx.lineWidth      = 0.5
+            static_ctx.beginPath()
+            static_ctx.moveTo( a.x, a.y )
+            static_ctx.lineTo( b.x, b.y )
+            static_ctx.stroke()
+        })
     static_ctx.restore()
 
 
