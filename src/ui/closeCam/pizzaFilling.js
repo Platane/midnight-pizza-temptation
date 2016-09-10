@@ -14,8 +14,6 @@ const pizzaBuffer = Array.from({ length: 10 }).map( () => {
     pizza( ctx )
     ctx.restore()
 
-    document.body.appendChild( canvas )
-
     return canvas
 })
 

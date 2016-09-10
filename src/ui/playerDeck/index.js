@@ -19,7 +19,7 @@ const createPlayer = ( player ) => {
     dom.appendChild( touch )
 
     const scoreCanvas = create( style.score, 'canvas' )
-    scoreCanvas.width = 460
+    scoreCanvas.width = 560
     scoreCanvas.height = 50
     dom.appendChild( scoreCanvas )
 
