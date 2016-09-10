@@ -24,7 +24,7 @@ const dom_map = document.getElementById('map')
 
 const x = document.getElementById('map_').getBoundingClientRect()
 
-const width     = Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 1000 )
+const width     = 0|Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 1000 )
 const height    = width
 
 const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = generateNetwork({
