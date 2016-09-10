@@ -11,12 +11,13 @@ module.exports = ( ctx, o ) => {
                 x : 0,
                 y : 0,
                 r : Math.random()*6 -3,
-                l : (0.5+Math.random())*40,
+                l : (0.5+Math.random())*50,
                 c : pizzaPool[ Math.floor( Math.random() * pizzaPool.length ) ],
                 v : point.normalize({ x:Math.random()-0.5, y:Math.random()-0.5 }),
                 // v : point.normalize({ x:1, y:0 }),
-                s : (1+Math.random())* 0.06,
+                s : (1+Math.random())* 0.07,
                 n : 2+Math.ceil( Math.random() * 1.5 ),
+                e : 1 + Math.random() * 0.2
             })
         )
 
@@ -49,7 +50,7 @@ module.exports = ( ctx, o ) => {
             const s = x.s * ( 0.6+h )
 
             ctx.save()
-            ctx.globalAlpha = 1 - (t-0.8)*5
+            ctx.globalAlpha = Math.max( 0, 1 - (t * x.e -0.8)*5 )
             ctx.translate(
                 o.x +   x.v.x * x.l * sqrt_t,
                 o.y +   x.v.y * x.l * sqrt_t - h * 10
