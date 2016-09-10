@@ -7,7 +7,7 @@ const path = ( ctx, arr ) => {
 
 
 // draw a 100x100 pizza
-module.exports = ( ctx, seed, color ) => {
+module.exports = ( ctx ) => {
 
     const color_crust           = '#b58a1c'
     const color_base            = '#df8d34'
@@ -128,7 +128,7 @@ module.exports = ( ctx, seed, color ) => {
 
     ctx.beginPath()
     ctx.lineCap='round'
-    ctx.strokeStyle='#444'
+    ctx.strokeStyle='#000'
     path( ctx, [
         ...keys.slice(0,4),
         m[3],

@@ -8,13 +8,23 @@ const step = ( network, carriers, players ) =>
     carriers
         .forEach( carrier => {
 
+            if ( carrier.game.waitAfterScore > 0 ){
+
+                carrier.game.waitAfterScore --
+
+                return
+            }
+
             // change arc at the end of the arc
             if ( carrier.position.k >=1 ) {
 
                 // get new route if this one is over
                 if ( carrier.decision.path.length == 0 ) {
 
-                    carrier.game.score ++
+                    if ( carrier.control ) {
+                        carrier.game.score ++
+                        carrier.game.waitAfterScore = 100
+                    }
 
                     choseNewRoute( network, carrier )
                 }

@@ -19,6 +19,9 @@ module.exports = ( carriers ) => {
             if ( !carrier )
                 return
 
+            carrier.game.score = 0
+            carrier.game.waitAfterScore = 0
+            
             carrier.control = {
                 key,
                 color       : which,

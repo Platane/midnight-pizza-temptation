@@ -4,33 +4,25 @@ import color                    from 'ui/color'
 import pizza                    from 'ui/pizza'
 import {getCarrierPosition}     from 'ui/projection'
 import style                    from './style.mcss'
-
+import createPizzaFilling       from './pizzaFilling'
 
 const color_flat_background = '#2e3042'
 
 
-module.exports = ( width, height, carriers, network, backgrounds, marge, margeBezier, carrier ) => {
-
-    const dom           = create( style.cam )
-    const canvas        = create( style.canvas, 'canvas' )
-    dom.style.borderColor     = color( carrier )
-    dom.appendChild( canvas )
-
-    canvas.width    = width
-    canvas.height   = height
-
-    const ctx = canvas.getContext('2d')
-
+const createComputeCam = () => {
     const kinetics = {}
-    const computeCam = ( width, height, carrier ) => {
+    return ( width, height, carrier ) => {
 
         const p = getCarrierPosition( carrier, 3, 1.5 )
 
         const v = Math.min( 0.9, carrier.position.velocity ) / 0.9
         const n = point.normalize( point.sub( carrier.position.arc.node_b, carrier.position.arc.node_a ) )
 
-        p.x += n.x * 70 * ( v*2 + 1 ) /3
-        p.y += n.y * 70 * ( v*2 + 1 ) /3
+        if ( !carrier.game.waitAfterScore ) {
+            p.x += n.x * 70 * ( v*2 + 1 ) /3
+            p.y += n.y * 70 * ( v*2 + 1 ) /3
+
+        }
 
         const z = 5 - v * 2
 
@@ -51,7 +43,23 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
 
         return kinetics[ carrier.index ] = u
     }
+}
 
+module.exports = ( width, height, carriers, network, backgrounds, marge, margeBezier, carrier ) => {
+
+    const dom           = create( style.cam )
+    const canvas        = create( style.canvas, 'canvas' )
+    dom.style.borderColor     = color( carrier )
+    dom.appendChild( canvas )
+
+    canvas.width    = width
+    canvas.height   = height
+
+    const ctx = canvas.getContext('2d')
+
+    const computeCam    = createComputeCam()
+    const pizzaFilling  = createPizzaFilling( ctx, width, height, 100 )
+    let u =0
 
     const update = () => {
 
@@ -82,8 +90,11 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
 
         })
 
-
         ctx.restore()
+
+        if ( carrier.game.waitAfterScore )
+            pizzaFilling( 100-carrier.game.waitAfterScore )
+
     }
 
     return { dom, update }
