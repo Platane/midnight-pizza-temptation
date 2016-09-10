@@ -31,8 +31,8 @@ const { perlin, vertices, network, faces, max_weight } = generateNetwork({
     width,
     height,
     perlin_size     : 350,
-    n_points        : 280,
-    n_sinks         : 16,
+    n_points        : 180,
+    n_sinks         : 5,
     min_length      : 6,
 })
 
@@ -60,7 +60,7 @@ const carriers = Array.from({ length: 16 })
             decision : {
                 path : [ ],    // nodes
             },
-            info    : { ...info, maxVelocity: 1 + Math.random()},
+            info    : { ...info, maxVelocity: 0.8 + Math.random() * 0.9 },
             index   : i,
             game    : { score: -1 },
         })
@@ -71,13 +71,15 @@ require('core/player')( carriers )
 import createPlayerDeck     from 'ui/playerDeck'
 import createCamList        from 'ui/closeCam/list'
 
+const max_zoom = 1
+
 const backgrounds = {
 
-    night           : require('ui/background/night')( width, height, 3, faces, vertices, perlin ),
+    night           : require('ui/background/night')( width, height, max_zoom, faces, vertices, perlin ),
 
     roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 1.5 ),
 
-    roads_precise   : require('ui/background/precise_roads')( width, height, 3, network, max_weight, 0.6, 0.1 ),
+    roads_precise   : require('ui/background/precise_roads')( width, height, max_zoom, network, max_weight, 0.6, 0.1 ),
 }
 
 const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( width, height, carriers )
