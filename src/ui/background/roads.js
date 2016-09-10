@@ -1,9 +1,9 @@
 
-import paintPerlin              from 'ui/perlin'
 import drawGlowing              from 'ui/base/glow_line'
 import {create}                 from 'ui/dom'
 
 const color_road            = '#4bc2bb'
+// const color_road            = '#3a678c'
 
 module.exports = ( width, height, resolution, network, max_weight, marge, margeBezier ) => {
 

@@ -1,11 +1,8 @@
 
 import paintPerlin              from 'ui/perlin'
-import drawGlowing              from 'ui/base/glow_line'
 import {create}                 from 'ui/dom'
 
 const color_flat_background = '#2e3042'
-const color_unused_graph    = '#4b4e63'
-const color_road            = '#4bc2bb'
 
 document.body.style.backgroundColor = color_flat_background
 

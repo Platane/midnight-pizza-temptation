@@ -184,6 +184,7 @@ module.exports = (options={}) => {
     )
 
     return {
+        max_weight : network.arcs.reduce( (max,x) => Math.max( max, x.weight ), 0 ),
         perlin,
         faces,
         vertices,

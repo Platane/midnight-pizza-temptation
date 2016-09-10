@@ -71,11 +71,11 @@ require('core/player')( carriers )
 import createPlayerDeck     from 'ui/playerDeck'
 import createCamList        from 'ui/closeCam/list'
 
-const max_zoom = 1
+const max_zoom = 3.5
 
 const backgrounds = {
 
-    night           : require('ui/background/night')( width, height, max_zoom, faces, vertices, perlin ),
+    night           : require('ui/background/night')( width, height, 1, faces, vertices, perlin ),
 
     roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 1.5 ),
 
