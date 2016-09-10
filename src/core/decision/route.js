@@ -11,7 +11,7 @@ const choseNewRoute = ( network, carrier ) => {
     const destination = availableDestinations[ Math.floor(Math.random() * availableDestinations.length) ]
 
     // chose a path to the destination
-    carrier.decision.path = aStar( currentNode, destination, x => x.length )
+    return aStar( currentNode, destination, x => x.length )
         .slice(1)
 }
 

@@ -164,8 +164,8 @@ module.exports = (options={}) => {
         })
         .filter( x => x )
 
-    const max_distance = width*height/2
-    const min_distance = width*height/9
+    const max_distance = width*height/1
+    const min_distance = width*height/12
     endPoints.forEach( e =>
         e.reachables = endPoints.filter( x => {
             const d = point.sqrt_distance( x.node, e.node )

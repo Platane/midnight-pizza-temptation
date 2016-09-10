@@ -26,7 +26,7 @@ const step = ( network, carriers, players ) =>
                         carrier.game.waitAfterScore = 100
                     }
 
-                    choseNewRoute( network, carrier )
+                    carrier.decision.path = choseNewRoute( network, carrier )
                 }
 
                 // next arc

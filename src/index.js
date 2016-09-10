@@ -1,6 +1,16 @@
 require('file?name=index.html!./index.html')
 
 
+// const seed = Math.random()
+// const seed = 0.9395106087081704
+// const l = 2<<29
+// let r = 0|(seed * l)
+// console.log( seed )
+// Math.random = () => {
+//     r = 0|Math.abs( +( l + seed + r*r ).toString().slice( 2, -2 ) % l )
+//     return r / l
+// }
+
 
 import pizza from 'ui/pizza'
 {
@@ -53,8 +63,8 @@ const carriers = Array.from({ length: 16 })
     .map((_,i) =>
         ({
             position : {
-                arc         : network.endPoints[ i % network.endPoints.length ].node.arcs_leaving[0],
-                k           : 0.9,
+                arc         : network.endPoints[ i % network.endPoints.length ].node.arcs_entering[0],
+                k           : 0.5,
                 velocity    : 0,
             },
             decision : {
@@ -107,6 +117,23 @@ document.getElementById('playerDeck').appendChild( playerDeck.dom )
 
 const camList    = createCamList( carriers, network, backgrounds, 0.6, 1.5 )
 document.getElementById('camlist').appendChild( camList.dom )
+
+import {createExchange}                 from 'ui/exchange'
+
+
+// network.nodes
+//     .every( node => {
+//         if ( node.arcs_entering.length == 0 && node.arcs_leaving.length == 0 )
+//             debugger
+//     })
+// network.endPoints
+//     .every( endPoint => {
+//         if ( endPoint.reachables.length == 0 )
+//             debugger
+//     })
+
+
+let u
 
 const loop = () => {
 
