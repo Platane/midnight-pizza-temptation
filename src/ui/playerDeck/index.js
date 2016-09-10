@@ -54,6 +54,9 @@ module.exports = ( carriers ) => {
 
         while ( grid.length < players.length ) {
 
+            const i = document.getElementById('instruction')
+            i && i.parentNode.removeChild( i )
+
             const { dom, update } = createPlayer( players[ grid.length ] )
 
             dom_root.appendChild( dom )
