@@ -1,6 +1,6 @@
 import style        from './style.mcss'
 import color        from 'ui/color'
-import pizza        from 'ui/pizza'
+import pizza        from 'ui/pizza/paint'
 import {create}     from 'ui/dom'
 
 const createPlayer = ( player ) => {

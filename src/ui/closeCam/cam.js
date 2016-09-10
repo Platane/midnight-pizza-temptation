@@ -1,7 +1,6 @@
 import point                    from 'math/point'
 import {create}                 from 'ui/dom'
 import color                    from 'ui/color'
-import pizza                    from 'ui/pizza'
 import {getCarrierPosition}     from 'ui/projection'
 import style                    from './style.mcss'
 import createPizzaFilling       from './pizzaFilling'
@@ -59,7 +58,6 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
 
     const computeCam    = createComputeCam()
     const pizzaFilling  = createPizzaFilling( ctx, width, height, 100 )
-    let u =0
 
     const update = () => {
 

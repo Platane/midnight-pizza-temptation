@@ -1,21 +1,5 @@
-import point                    from 'math/point'
-import {create}                 from 'ui/dom'
-import color                    from 'ui/color'
-import pizza                    from 'ui/pizza'
+import pizzaPool                from 'ui/pizza/pool'
 
-const pizzaBuffer = Array.from({ length: 10 }).map( () => {
-
-    const canvas        = create( null, 'canvas' )
-    canvas.width        = 150
-    canvas.height       = 150
-    const ctx           = canvas.getContext('2d')
-    ctx.save()
-    ctx.scale( 1.5, 1.5 )
-    pizza( ctx )
-    ctx.restore()
-
-    return canvas
-})
 
 module.exports = ( ctx, width, height, max ) => {
 
@@ -46,7 +30,7 @@ module.exports = ( ctx, width, height, max ) => {
             rain.push({
                 x : ( ( rain.length % 3 ) / 3 + Math.random() * 0.3 - 0.3  ) * width * 1.4 ,
                 y : - 100,
-                i : Math.floor( Math.random() * pizzaBuffer.length ),
+                i : Math.floor( Math.random() * pizzaPool.length ),
                 r : Math.random()*6,
                 s : 0.2+Math.random()*0.2,
             })
@@ -71,7 +55,7 @@ module.exports = ( ctx, width, height, max ) => {
             ctx.translate( rain[i].x, rain[i].y )
             ctx.scale(rain[i].s,rain[i].s)
             ctx.rotate(rain[i].r)
-            ctx.drawImage( pizzaBuffer[ rain[i].i ], 0, 0 )
+            ctx.drawImage( pizzaPool[ rain[i].i ], 0, 0 )
             ctx.restore()
         }
     }

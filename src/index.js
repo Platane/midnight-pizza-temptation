@@ -12,21 +12,6 @@ require('file?name=index.html!./index.html')
 // }
 
 
-import pizza from 'ui/pizza'
-{
-    const ctx = document.getElementById('pizza').getContext('2d')
-    for(let x=15;x--;)
-    for(let y=10;y--;)
-    {
-        ctx.save()
-        ctx.translate(100*x,100*y)
-        // ctx.scale(7,7)
-        pizza( ctx )
-        ctx.restore()
-    }
-}
-
-
 
 import generateNetwork          from 'core/generation'
 
@@ -147,6 +132,19 @@ const loop = () => {
 
     playerDeck.update()
     camList.update()
+
+
+    const k = carriers[0].position.arc.node_b.exchanges
+
+    if ( u != k && k ){
+
+        const ex = document.getElementById('exchange')
+
+        while( ex.children[0] )
+            ex.removeChild( ex.children[0] )
+
+        ex.appendChild( createExchange( u=k ) )
+    }
 
     requestAnimationFrame( loop )
 }
