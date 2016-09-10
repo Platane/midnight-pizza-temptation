@@ -1,24 +1,10 @@
 import {createPerlin}           from 'math/perlin'
-import {step as sstep}          from 'math/pointCloud'
 import {voronoiTesselation}     from 'math/tesselation/voronoiTesselation'
-import {aStar}                  from 'math/graph'
+import aStar                    from 'math/graph/aStar'
 import {build}                  from 'math/graph/build'
 import point                    from 'math/point'
-
-
-const pointPerlinRepartition = ( perlin, width, height, n  ) => {
-
-    const points = []
-    while( points.length < n ){
-
-        const p = {x:Math.random()*width,y:Math.random()*height}
-
-        if ( Math.random() > perlin( p.x, p.y ) * 2 + 0.5 )
-            points.push( p )
-    }
-
-    return points
-}
+import mergeCloseVertices       from 'math/graph/mergeCloseVertices'
+import generatePointCloud       from './pointCloud'
 
 const graphFromVoronoi = ( faces, n ) => {
 
@@ -63,17 +49,13 @@ module.exports = (options={}) => {
         perlin_size,
         n_points,
         n_sinks,
+        min_length,
     } = options
 
     // generate perlin noise
     const perlin = createPerlin( width, height, perlin_size )
 
-    // generate N point with perlin noise repartition
-    const points = pointPerlinRepartition( perlin, width, height, n_points )
-
-    // physic step, to seprate the points
-    for( let k=2; k--;)
-        sstep( points, [], width, height )
+    const points = generatePointCloud( perlin, width, height, n_points )
 
     // generate voronoi tesselation
     let { faces, vertices } = voronoiTesselation( points )
@@ -84,20 +66,27 @@ module.exports = (options={}) => {
         u.y = Math.round( u.y * 100 ) / 100
     })
 
-    const x = excludeOutOfMap( width, height, faces, vertices )
-
-    const _faces = x.faces
-
     // exclude vertices out of the map
+    const x = excludeOutOfMap( width, height, faces, vertices )
+    faces = x.faces
+
+
+    // generate the graph from the voronoi graph,
+    let completeGraph = graphFromVoronoi( faces, vertices.length )
+
+    // merge the vertices that are too close
+    let u = mergeCloseVertices( completeGraph, vertices, min_length )
+    completeGraph = u.graph
+    vertices = u.vertices
 
     // pick N sinks
     const sinks = Array.from({ length: n_sinks })
         .map( () => Math.floor( Math.random() * vertices.length ) )
-        .filter( i => !x.out[i] )
+        .filter( i => !x.out[i] && completeGraph[i].length > 0 )
 
-    // generate the graph from the voronoi graph,
-    // and format it as such as it can be used in aStar
-    const graph = graphFromVoronoi( _faces, vertices.length )
+
+    // format the graph to be used with aStar
+    const graph = completeGraph
         .map( ( arcs_leaving, index ) => ({ index, arcs_leaving }) )
 
     graph.forEach( node =>
@@ -109,8 +98,7 @@ module.exports = (options={}) => {
 
 
     const lightGraph = Array.from( vertices ).map( () => [] )
-    // const w = arc => point.distance(arc.node_a,arc.node_b)
-    const w = arc => 1
+    const w = () => 1
 
     for( let a=sinks.length; a--; )
     for( let b=sinks.length; b--; )
@@ -196,12 +184,10 @@ module.exports = (options={}) => {
     )
 
     return {
-        max_weight : network.arcs.reduce( (max,x) => Math.max( max, x.weight ), 0 ),
         perlin,
         faces,
-        trimed_faces : _faces,
         vertices,
-        graph   : lightGraph,
+        graph        : lightGraph,
         network,
         endPoints,
     }

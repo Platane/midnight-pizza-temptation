@@ -1,4 +1,4 @@
-import style        from './style.css'
+import style        from './style.mcss'
 import createCam    from 'ui/closeCam/cam'
 import {create}     from 'ui/dom'
 

@@ -1,4 +1,4 @@
-import style        from './style.css'
+import style        from './style.mcss'
 import color        from 'ui/color'
 import pizza        from 'ui/pizza'
 import {create}     from 'ui/dom'

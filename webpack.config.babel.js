@@ -33,6 +33,11 @@ module.exports = {
 
             {
                 test: /\.css$/,
+                loader: 'style!css'
+            },
+
+            {
+                test: /\.mcss$/,
                 loader: 'style!css?modules&importLoaders=1&localIdentName=[hash:base64:4]!postcss'
             },
 

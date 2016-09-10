@@ -3,7 +3,7 @@ import point    from 'math/point'
 
 // return the fastest path to go from a to b
 // compute_w is the method which attribute the weight to the arc, by default it's its length
-const aStar = ( node_start, node_end, compute_w ) => {
+module.exports = ( node_start, node_end, compute_w ) => {
 
     compute_w = compute_w || ( x => x.length )
 
@@ -70,5 +70,3 @@ const aStar = ( node_start, node_end, compute_w ) => {
     }
 
 }
-
-module.exports = { aStar }

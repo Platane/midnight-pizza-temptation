@@ -27,12 +27,13 @@ const x = document.getElementById('map_').getBoundingClientRect()
 const width     = 0|Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 1000 )
 const height    = width
 
-const { perlin, vertices, faces, graph, network, trimed_faces, max_weight } = generateNetwork({
+const { perlin, vertices, network, faces, max_weight } = generateNetwork({
     width,
     height,
     perlin_size     : 350,
-    n_points        : 160,
+    n_points        : 280,
     n_sinks         : 16,
+    min_length      : 6,
 })
 
 
@@ -72,11 +73,11 @@ import createCamList        from 'ui/closeCam/list'
 
 const backgrounds = {
 
-    night           : require('ui/background/night')( width, height, 2, trimed_faces, vertices, perlin ),
+    night           : require('ui/background/night')( width, height, 3, faces, vertices, perlin ),
 
-    roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 2 ),
+    roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 1.5 ),
 
-    roads_precise   : require('ui/background/precise_roads')( width, height, 2, network, max_weight, 3, 3 ),
+    roads_precise   : require('ui/background/precise_roads')( width, height, 3, network, max_weight, 0.6, 0.1 ),
 }
 
 const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( width, height, carriers )
@@ -102,7 +103,7 @@ dom_map.appendChild( carrier_canvas )
 const playerDeck = createPlayerDeck( carriers )
 document.getElementById('playerDeck').appendChild( playerDeck.dom )
 
-const camList    = createCamList( carriers, network, backgrounds, 3, 5 )
+const camList    = createCamList( carriers, network, backgrounds, 0.6, 1.5 )
 document.getElementById('camlist').appendChild( camList.dom )
 
 const loop = () => {

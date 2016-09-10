@@ -2,7 +2,7 @@ import {create}                 from 'ui/dom'
 import color                    from 'ui/color'
 import pizza                    from 'ui/pizza'
 import {getCarrierPosition}     from 'ui/projection'
-import style                    from './style.css'
+import style                    from './style.mcss'
 
 
 const color_flat_background = '#2e3042'
@@ -10,7 +10,7 @@ const color_flat_background = '#2e3042'
 
 const computeCam = ( width, height, carrier ) => {
     const p    = getCarrierPosition( carrier, 3, 1.5 )
-    const zoom = 2
+    const zoom = 5 - Math.min( 2, carrier.position.velocity ) / 1.5
     return {
         x       : p.x * zoom - width/2,
         y       : p.y * zoom - height/2,
@@ -43,8 +43,8 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
         ctx.translate( -o.x, -o.y )
         ctx.scale( o.zoom, o.zoom )
 
-        ctx.drawImage(backgrounds.night.s,0,0,backgrounds.night.s.width/2,backgrounds.night.s.height/2)
-        ctx.drawImage(backgrounds.roads_precise.s,0,0,backgrounds.night.s.width/2,backgrounds.night.s.height/2)
+        ctx.drawImage(backgrounds.night.s,0,0,backgrounds.night.s.width/backgrounds.night.r,backgrounds.night.s.height/backgrounds.night.r)
+        ctx.drawImage(backgrounds.roads_precise.s,0,0,backgrounds.roads_precise.s.width/backgrounds.roads_precise.r,backgrounds.roads_precise.s.height/backgrounds.roads_precise.r)
 
 
         // draw carrier
@@ -54,7 +54,7 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
 
             ctx.beginPath()
             ctx.fillStyle = color( carrier )
-            ctx.arc( p.x, p.y, 2, 0, Math.PI*2 )
+            ctx.arc( p.x, p.y, 0.8, 0, Math.PI*2 )
             ctx.fill()
 
         })

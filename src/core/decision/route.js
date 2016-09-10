@@ -1,4 +1,4 @@
-import { aStar }            from 'math/graph'
+import aStar    from 'math/graph/aStar'
 
 const choseNewRoute = ( network, carrier ) => {
 
