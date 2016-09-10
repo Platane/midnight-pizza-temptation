@@ -2,14 +2,14 @@ require('file?name=index.html!./index.html')
 
 
 // const seed = Math.random()
-// const seed = 0.9395106087081704
-// const l = 2<<29
-// let r = 0|(seed * l)
-// console.log( seed )
-// Math.random = () => {
-//     r = 0|Math.abs( +( l + seed + r*r ).toString().slice( 2, -2 ) % l )
-//     return r / l
-// }
+const seed = 0.6440666625006068
+const l = 2<<29
+let r = 0|(seed * l)
+console.log( seed )
+Math.random = () => {
+    r = 0|Math.abs( +( l + seed + r*r ).toString().slice( 2, -2 ) % l )
+    return r / l
+}
 
 
 
@@ -136,7 +136,7 @@ const loop = () => {
 
     const k = carriers[0].position.arc.node_b.exchanges
 
-    if ( u != k && k ){
+    if ( u != k && k.length ){
 
         const ex = document.getElementById('exchange')
 

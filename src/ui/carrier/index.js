@@ -1,6 +1,7 @@
 
 import color                    from 'ui/color'
 import {getCarrierPosition}     from 'ui/projection'
+import createSplosion           from './pizzaSplosion'
 
 
 const marge = 0
@@ -15,6 +16,8 @@ module.exports = ( width, height, carriers ) => {
     canvas.height = height
 
     const ctx = canvas.getContext('2d')
+
+    const pizzas = []
 
     const update = () => {
         ctx.clearRect(0,0,width,height)
@@ -60,7 +63,18 @@ module.exports = ( width, height, carriers ) => {
 
         })
 
+        // draw pizza explosion
+        carriers
+            .filter( carrier => carrier.game.waitAfterScore == 100 )
+            .forEach( carrier =>
+                pizzas.push( createSplosion( ctx, carrier.position.arc.node_a  ) )
+            )
 
+        for(let i=pizzas.length;i--;)
+            if( pizzas[i]() )
+                pizzas.splice(i,1)
+
+        // draw flag
         carriers
             .filter( carrier => carrier.control )
             .forEach( carrier => {
