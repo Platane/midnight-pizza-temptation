@@ -36,10 +36,10 @@ module.exports = ( ctx, width, height, max ) => {
         if ( k < 0.3 )
             m += u
 
-        else if ( k < 0.5 )
+        else if ( k < 0.4 )
             m += u/2
 
-        else if ( k < 0.6 )
+        else if ( k < 0.5 )
             m += u/4
 
         while( rain.length < m )
