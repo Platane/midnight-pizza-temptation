@@ -67,7 +67,7 @@ module.exports = ( width, height, carriers ) => {
         carriers
             .filter( carrier => carrier.game.waitAfterScore == 100 )
             .forEach( carrier =>
-                pizzas.push( createSplosion( ctx, carrier.position.arc.node_a  ) )
+                pizzas.push( createSplosion( ctx, carrier.position.arc.node_a, color( carrier )  ) )
             )
 
         for(let i=pizzas.length;i--;)

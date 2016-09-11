@@ -2,9 +2,9 @@ import pizzaPool    from 'ui/pizza/pool'
 import point        from 'math/point'
 
 const hop = ( t, n=3 ) =>
-    ( 1-t*0.6 )*Math.abs( Math.sin( t*Math.PI*n ) )
+    ( 1-t*0.5 )*Math.abs( Math.sin( t*Math.PI*n ) )
 
-module.exports = ( ctx, o ) => {
+module.exports = ( ctx, o, blast_color ) => {
 
     const particules = Array.from({ length: 20 })
         .map( () => ({
@@ -14,9 +14,8 @@ module.exports = ( ctx, o ) => {
                 l : (0.5+Math.random())*50,
                 c : pizzaPool[ Math.floor( Math.random() * pizzaPool.length ) ],
                 v : point.normalize({ x:Math.random()-0.5, y:Math.random()-0.5 }),
-                // v : point.normalize({ x:1, y:0 }),
                 s : (1+Math.random())* 0.07,
-                n : 2+Math.ceil( Math.random() * 1.5 ),
+                n : 1+Math.ceil( Math.random() * 1.5 ),
                 e : 1 + Math.random() * 0.2
             })
         )
@@ -34,13 +33,26 @@ module.exports = ( ctx, o ) => {
         if ( t < 0.25 ){
             ctx.save()
             ctx.beginPath()
-            ctx.globalAlpha = Math.max( 0, 1 - (t-0.15)*10 )
-            ctx.fillStyle = 'rgba(255,255,255,0.2)'
+            ctx.globalCompositeOperation = 'lighten'
+            ctx.globalAlpha = Math.max( 0, 1 - (t-0.15)*10 ) * 0.8
+            ctx.fillStyle = blast_color
             ctx.beginPath()
             ctx.arc( o.x, o.y, 10+t*120, 0, Math.PI*2 )
             ctx.fill()
             ctx.restore()
         }
+
+        particules.forEach( x => {
+
+            ctx.save()
+            ctx.fillStyle = 'rgba(0,0,0,0.2)'
+            ctx.globalAlpha = Math.max( 0, 1 - (t * x.e -0.8)*5 )
+            ctx.beginPath()
+            ctx.arc(o.x +   x.v.x * x.l * sqrt_t, o.y +   x.v.y * x.l * sqrt_t, x.s*60, 0, Math.PI*2)
+            ctx.fill()
+            ctx.restore()
+
+        })
 
         particules.forEach( x => {
 
