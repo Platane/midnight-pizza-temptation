@@ -10,8 +10,8 @@ const onArc = ( arc, k, marge=0 ) => {
     const p = point.lerp( node_a, node_b, k )
 
     return {
-        x : p.x + n.y/l*marge,
-        y : p.y - n.x/l*marge,
+        x : p.x - n.y/l*marge,
+        y : p.y + n.x/l*marge,
     }
 }
 

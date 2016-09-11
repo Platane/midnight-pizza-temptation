@@ -34,8 +34,8 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
             if ( l< margeBezier )
                 return
 
-            n.x /= l
-            n.y /= l
+            n.x /= -l
+            n.y /= -l
 
             const a = {
                 x : node_a.x + n.x * margeBezier + n.y * marge,
