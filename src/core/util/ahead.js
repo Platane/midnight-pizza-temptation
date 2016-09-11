@@ -1,4 +1,6 @@
 
+const exchange_radius = 23
+
 const getCarriersOnArc = ( carriers, arc ) =>
     carriers
         .filter( carrier => carrier.position.arc == arc )
@@ -21,7 +23,9 @@ const on_same = ( carriers, arc, l ) =>
 // take account of the node priority
 const on_entering = ( carriers, arc, next_arc, l ) => {
 
-    if ( l > 30 )
+    // too far away from the node to care about carrier in it
+    // ...or too deeply engage in to care
+    if ( l > exchange_radius || l < exchange_radius * 0.3 )
         return []
 
     const incomingArcs = next_arc
@@ -53,7 +57,7 @@ const on_entering = ( carriers, arc, next_arc, l ) => {
 
                         // TODO some consideration of the other carrier velocity ?
 
-                        return l_ < 30 && { carrier, distance: l_ < l ? l - l_ : 0 }
+                        return l_ < exchange_radius && { carrier, distance: l_ < l ? l - l_ : 0 }
 
                     })
                     .filter( x => x )
