@@ -14,6 +14,7 @@ module.exports = {
                 : {
                     'test-spec'   : './src/test/spec/index.js',
                     'test-init'   : './src/test/runner/index.js',
+                    'doc-init'    : './doc/index.js',
                 }
         )
     },
