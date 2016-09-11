@@ -62,11 +62,22 @@ const on_entering = ( carriers, arc, next_arc, l ) => {
 }
 
 // get the carriers ahead on the leaving arcs
-const on_leaving = ( carriers, node, l ) =>
+const on_leaving = ( carriers, arc, next_arc, l ) => {
 
-    [].concat(
 
-        ...node.arcs_leaving
+    const outgoingArcs = []
+
+    arc.node_b.exchanges
+        .filter( x => x.arc_a == arc )
+        .forEach( ex => {
+            outgoingArcs.push( ...ex.pass.map( ex => ex.arc_a ) )
+            outgoingArcs.push( ...ex.block.map( ex => ex.arc_a ) )
+            outgoingArcs.push( ex.arc_b )
+        })
+
+    return [].concat(
+
+        ...outgoingArcs
             .map( arc =>
 
                 // find all the carriers on this arc
@@ -85,7 +96,7 @@ const on_leaving = ( carriers, node, l ) =>
                     .filter( x => x )
             )
     )
-
+}
 
 /**
  *
@@ -114,7 +125,7 @@ const getCarrierAhead = ( carriers, arc, k, path, carrier, distance=0 ) => {
         ...on_entering( carriers, arc, next_arc, l ),
 
         // carriers in node, exiting
-        ...on_leaving( carriers, arc.node_b, l ),
+        ...on_leaving( carriers, arc, next_arc, l ),
     ]
 
         .filter( x => x.carrier != carrier )

@@ -1,5 +1,6 @@
-import './build.exchange'
-import './build'
-import './ahead'
-import './tesselation'
-import './mergeCloseVertices'
+
+require('./build.exchange')
+require('./build')
+require('./ahead')
+require('./tesselation')
+require('./mergeCloseVertices')

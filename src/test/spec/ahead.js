@@ -2,9 +2,40 @@
 
 import {getCarrierAheadCarrier}         from 'core/util/ahead'
 import {build}                          from 'math/graph/build'
+import {createExchange}                 from 'ui/exchange'
 import expect                           from 'expect'
 
 describe('ahead', function(){
+
+    beforeEach(function(){
+        if ( typeof document == 'undefined' )
+            return
+
+        this.dom = document.getElementById('exchanges')
+    })
+
+    afterEach(function(){
+        this.dom && this.exchanges && this.exchanges.length && this.dom.appendChild( createExchange( this.exchanges ) )
+    })
+
+    afterEach(function( done ){
+
+        if( !this.exchanges || typeof location == 'undefined' || !location.search.match(/break/) )
+            return done()
+
+        this.timeout(99999999999)
+
+        window.next = () => {
+            delete window.next
+            done()
+        }
+    })
+
+    afterEach(function(){
+        while(this.dom && this.dom.children.length)
+            this.dom.removeChild(this.dom.children[0])
+    })
+
 
     beforeEach(function(){
 
@@ -111,5 +142,93 @@ describe('ahead', function(){
         const res = getCarrierAheadCarrier( carriers, carriers[0] )
 
         expect( res && res.carrier ).toBe( carriers[1] )
+    })
+
+
+    it('carrier on next next next road', function(){
+
+        const { arcs, nodes } = this.network = build([
+            { x:0   , y:0 , links: [1]   },
+            { x:20  , y:0 , links: [2]   },
+            { x:40  , y:0 , links: [3]   },
+            { x:60  , y:0 , links: [4]   },
+            { x:80  , y:0 , links: [5]   },
+            { x:100 , y:0 , links:  []   },
+        ])
+
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.5 },
+                decision    : { path    : [ nodes[2], nodes[3], nodes[4], nodes[5] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_b.index == 5 ), k : 0.5 },
+                decision    : { path    : [] },
+                index       : 1,
+            },
+        ]
+
+        const res = getCarrierAheadCarrier( carriers, carriers[0] )
+
+        expect( res && res.carrier ).toBe( carriers[1] )
+
+    })
+
+    it('carrier on tube ( parrallel route that does not cross at the intersection )', function(){
+
+        const { arcs, nodes } = this.network = build([
+            { x:0   , y:0 , links: [1]   },
+            { x:50  , y:0 , links: [2,0]   },
+            { x:100 , y:0 , links: [1]   },
+        ])
+
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.99 },
+                decision    : { path    : [ nodes[2] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 2 ), k : 0.99 },
+                decision    : { path    : [ nodes[0] ] },
+                index       : 1,
+            },
+        ]
+
+        this.exchanges = nodes[1].exchanges
+
+        expect( getCarrierAheadCarrier( carriers, carriers[0] ) ).toNotExist( )
+        expect( getCarrierAheadCarrier( carriers, carriers[1] ) ).toNotExist( )
+
+    })
+
+    it('carrier on small tube ( parrallel route that does not cross at the intersection ) ( tube is small enought for the carrier to be both entering and leaving zone )', function(){
+
+        const { arcs, nodes } = this.network = build([
+            { x:0   , y:0 , links: [1]     },
+            { x:10  , y:0 , links: [2,0]   },
+            { x:20  , y:0 , links: [1,3]   },
+            { x:30  , y:0 , links: [2]     },
+        ])
+
+        const carriers = [
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 1 && arc.node_b.index == 2 ), k : 0.5 },
+                decision    : { path    : [ nodes[2] ] },
+                index       : 0,
+            },
+            {
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 2 && arc.node_b.index == 1 ), k : 0.5 },
+                decision    : { path    : [ nodes[0] ] },
+                index       : 1,
+            },
+        ]
+
+        this.exchanges = nodes[1].exchanges
+
+        expect( getCarrierAheadCarrier( carriers, carriers[0] ) ).toNotExist( )
+        expect( getCarrierAheadCarrier( carriers, carriers[1] ) ).toNotExist( )
+
     })
 })
