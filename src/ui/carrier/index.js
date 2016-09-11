@@ -24,7 +24,7 @@ module.exports = ( width, height, carriers ) => {
 
         // draw gps path
         carriers
-            .filter( carrier => carrier.control )
+            .filter( carrier => carrier.control && carrier.game.waitAfterScore == 0 )
             .forEach( carrier => {
 
                 const path = [ getCarrierPosition( carrier, marge, 0 ), carrier.position.arc.node_b, ...carrier.decision.path ]

@@ -33,7 +33,6 @@ module.exports = ( ctx, o, blast_color ) => {
         if ( t < 0.25 ){
             ctx.save()
             ctx.beginPath()
-            ctx.globalCompositeOperation = 'lighten'
             ctx.globalAlpha = Math.max( 0, 1 - (t-0.15)*10 ) * 0.8
             ctx.fillStyle = blast_color
             ctx.beginPath()
