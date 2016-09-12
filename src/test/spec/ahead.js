@@ -77,12 +77,12 @@ describe('ahead', function(){
 
         const carriers = [
             {
-                position    : { arc     : arcs.find( arc => arc.node_b.index == 0 ), k : 0.8 },
+                position    : { arc     : arcs.find( arc => arc.node_b.index == 0 ), k : 0.96 },
                 decision    : { path    : [ nodes[3] ] },
                 index       : 0,
             },
             {
-                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.5 },
+                position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.05 },
                 decision    : { path    : [ ] },
                 index       : 1,
             },
@@ -147,11 +147,11 @@ describe('ahead', function(){
 
         const { arcs, nodes } = this.network = build([
             { x:0   , y:0 , links: [1]   },
-            { x:20  , y:0 , links: [2]   },
-            { x:40  , y:0 , links: [3]   },
-            { x:60  , y:0 , links: [4]   },
-            { x:80  , y:0 , links: [5]   },
-            { x:100 , y:0 , links:  []   },
+            { x:10  , y:0 , links: [2]   },
+            { x:20  , y:0 , links: [3]   },
+            { x:30  , y:0 , links: [4]   },
+            { x:40  , y:0 , links: [5]   },
+            { x:50 , y:0 , links:  []   },
         ])
 
         const carriers = [
