@@ -1,10 +1,11 @@
 
 import point                    from 'math/point'
-import paintPerlin              from 'ui/perlin'
-import drawGlowing              from 'ui/base/glow_line'
+import {exchangeCurve}          from 'ui/exchange-projection'
 import {create}                 from 'ui/dom'
 
 const color_road            = '#4bc2bb'
+
+
 
 module.exports = ( width, height, resolution, network, max_weight, marge, margeBezier ) => {
 
@@ -18,13 +19,14 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
     static_ctx.scale( resolution, resolution )
 
     const dynamic_ctx = dynamic_canvas.getContext('2d')
-    dynamic_ctx.save()
-    dynamic_ctx.scale( resolution, resolution )
+
 
 
     // draw graph
-
     static_ctx.save()
+    static_ctx.lineWidth      = 0.4
+    static_ctx.strokeStyle    = color_road
+    static_ctx.globalAlpha    = 0.8
     network.arcs
         .forEach( ({ node_a, node_b, weight }) => {
 
@@ -34,27 +36,37 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
             if ( l< margeBezier )
                 return
 
-            n.x /= -l
-            n.y /= -l
+            n.x /= l
+            n.y /= l
 
             const a = {
-                x : node_a.x + n.x * margeBezier + n.y * marge,
-                y : node_a.y + n.y * margeBezier - n.x * marge,
+                x : node_a.x + n.x * margeBezier - n.y * marge,
+                y : node_a.y + n.y * margeBezier + n.x * marge,
             }
             const b = {
-                x : node_b.x - n.x * margeBezier + n.y * marge,
-                y : node_b.y - n.y * margeBezier - n.x * marge,
+                x : node_b.x - n.x * margeBezier - n.y * marge,
+                y : node_b.y - n.y * margeBezier + n.x * marge,
             }
 
-            static_ctx.strokeStyle    = color_road
-            static_ctx.lineWidth      = 0.5
             static_ctx.beginPath()
             static_ctx.moveTo( a.x, a.y )
             static_ctx.lineTo( b.x, b.y )
             static_ctx.stroke()
         })
-    static_ctx.restore()
 
+    // draw exchanges
+    ;[].concat( ...network.nodes.map( node => node.exchanges ) )
+        .forEach( ex => {
+
+            const { A,C,B } = exchangeCurve( marge, margeBezier, ex.node_a, ex.arc_a.node_b, ex.node_b )
+
+            static_ctx.beginPath()
+            static_ctx.moveTo( A.x, A.y )
+            static_ctx.quadraticCurveTo( C.x, C.y, B.x, B.y )
+            static_ctx.stroke()
+        })
+
+    static_ctx.restore()
 
     // draw endPoints
     static_ctx.save()
@@ -83,7 +95,39 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
     static_ctx.restore()
     dynamic_ctx.restore()
 
-    const update = () => 0
+
+
+
+    const particules = []
+
+    const update = () => {
+
+        // // particule
+        // dynamic_ctx.save()
+        // dynamic_ctx.scale( resolution, resolution )
+        // dynamic_ctx.fillStyle    = color_road
+        // dynamic_ctx.globalAlpha  = 0.2
+        // network.endPoints.forEach( ({ node }) => {
+        //     dynamic_ctx.beginPath()
+        //     dynamic_ctx.arc( node.x, node.y, 9, 0 , Math.PI*2 )
+        //     dynamic_ctx.fill()
+        //     dynamic_ctx.beginPath()
+        //     dynamic_ctx.arc( node.x, node.y, 7, 0 , Math.PI*2 )
+        //     dynamic_ctx.fill()
+        // })
+        // dynamic_ctx.globalAlpha  = 1
+        // dynamic_ctx.fillStyle    = '#fff'
+        // dynamic_ctx.strokeStyle  = '#555'
+        // dynamic_ctx.lineWidth    = 2
+        // network.endPoints.forEach( ({ node }) => {
+        //     dynamic_ctx.beginPath()
+        //     dynamic_ctx.arc( node.x, node.y, 4, 0 , Math.PI*2 )
+        //     dynamic_ctx.fill()
+        //     dynamic_ctx.stroke()
+        // })
+        // dynamic_ctx.restore    = 2
+
+    }
 
     return {
         width,

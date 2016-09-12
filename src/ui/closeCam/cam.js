@@ -13,6 +13,7 @@ const createComputeCam = () => {
     return ( width, height, carrier ) => {
 
         const p = getCarrierPosition( carrier, 3, 1.5 )
+        // const p = {x:0,y:0}
 
         const v = Math.min( 0.9, carrier.position.velocity ) / 0.9
         const n = point.normalize( point.sub( carrier.position.arc.node_b, carrier.position.arc.node_a ) )

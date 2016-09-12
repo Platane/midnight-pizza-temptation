@@ -24,10 +24,10 @@
 }
 
 .touchDown > .letter {
-    color: #ddd;
+    color: #999;
 }
 .touchDown {
-    border-color: #ddd;
+    border-color: #999;
 }
 
 .letter{

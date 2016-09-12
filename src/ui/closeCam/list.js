@@ -14,7 +14,7 @@ module.exports = ( carriers, network, backgrounds, marge, margeBezier ) => {
 
         while ( updates.length < players.length ) {
 
-            const { dom, update } = createCam( 340, 280, carriers, network, backgrounds, marge, margeBezier, players[ updates.length ] )
+            const { dom, update } = createCam( 340, 260, carriers, network, backgrounds, marge, margeBezier, players[ updates.length ] )
 
             dom_root.appendChild( dom )
 

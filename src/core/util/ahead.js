@@ -111,7 +111,7 @@ const on_leaving = ( carriers, arc, next_arc, l ) => {
  */
 const getCarrierAhead = ( carriers, arc, k, path, carrier, distance=0 ) => {
 
-    if ( distance > 200 )
+    if ( distance > 40 )
         return null
 
     // next arc to go

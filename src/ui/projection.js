@@ -1,5 +1,7 @@
-import point    from 'math/point'
-import bezier   from 'math/bezier'
+import point                from 'math/point'
+import bezier               from 'math/bezier'
+import {exchangeCurve}      from 'ui/exchange-projection'
+
 
 const onArc = ( arc, k, marge=0 ) => {
     const {node_a, node_b} = arc
@@ -24,33 +26,32 @@ const getCarrierPosition = ( carrier, marge, bezierMarge ) => {
     const distanceToEnd     = ( 1-carrier.position.k ) * carrier.position.arc.length
     const distanceToStart   = carrier.position.k * carrier.position.arc.length
 
+    _cache[ bezierMarge ] = _cache[ bezierMarge ] || {}
+
     if ( distanceToEnd < bezierMarge && carrier.decision.path[ 0 ] ) {
 
-        if ( !_cache[ carrier.index ] ) {
+
+        if ( !_cache[ bezierMarge ][ carrier.index ] ) {
 
             const arcA = carrier.position.arc
             const arcB = carrier.position.arc.node_b.arcs_leaving.find( x => x.node_b == carrier.decision.path[0] )
 
-            _cache[ carrier.index ] = {
-                A : onArc( arcA, 1 - bezierMarge / arcA.length, marge ),
-                O : carrier.position.arc.node_b,
-                B : onArc( arcB, bezierMarge / arcB.length, marge ),
-            }
+            _cache[ bezierMarge ][ carrier.index ] = exchangeCurve( marge, bezierMarge, arcA.node_a, arcA.node_b, arcB.node_b  )
         }
 
-        const { A, O, B } = _cache[ carrier.index ]
+        const { A, C, B } = _cache[ bezierMarge ][ carrier.index ]
 
-        return bezier( A, O, B, (1-distanceToEnd/bezierMarge) *0.5 )
+        return bezier( A, C, B, (1-distanceToEnd/bezierMarge) *0.5 )
 
-    } else if ( distanceToStart < bezierMarge && _cache[ carrier.index ] ) {
+    } else if ( distanceToStart < bezierMarge && _cache[ bezierMarge ][ carrier.index ] ) {
 
-        const { A, O, B } = _cache[ carrier.index ]
+        const { A, C, B } = _cache[ bezierMarge ][ carrier.index ]
 
-        return bezier( A, O, B, distanceToStart/bezierMarge *0.5 + 0.5 )
+        return bezier( A, C, B, distanceToStart/bezierMarge *0.5 + 0.5 )
 
     } else {
 
-        _cache[ carrier.index ] = null
+        _cache[ bezierMarge ][ carrier.index ] = null
 
         return carrierOnArc( carrier, marge )
     }

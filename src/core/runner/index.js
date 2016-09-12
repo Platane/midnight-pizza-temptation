@@ -57,9 +57,9 @@ const step = ( network, carriers, players ) =>
             // check for collision
             if ( carrier.control ){
                 const ahead = getCarrierAheadCarrier( carriers, carrier )
-                if ( ahead && ahead.distance < 4 ) {
+                if ( ahead && ahead.distance < 2 ) {
                     // collision
-                    ahead.carrier.game.dead = carrier.game.dead = true
+                    // ahead.carrier.game.dead = carrier.game.dead = true
                 }
             }
 

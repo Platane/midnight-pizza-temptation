@@ -1,7 +1,7 @@
 .cam{
     overflow: hidden;
     box-shadow: 0 0 15px 0 rgba(0,0,0,0.65);
-    margin: 10px;
+    margin: 4px;
     border-right: 6px solid #fff;
     border-radius: 2px;
 }
