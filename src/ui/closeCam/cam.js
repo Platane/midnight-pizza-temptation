@@ -4,6 +4,7 @@ import color                    from 'ui/color'
 import {getCarrierPosition}     from 'ui/projection'
 import style                    from './style.mcss'
 import createPizzaFilling       from './pizzaFilling'
+import {exchangeCurve}          from 'ui/exchange-projection'
 
 const color_flat_background = '#2e3042'
 
@@ -75,6 +76,44 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
 
         ctx.drawImage(backgrounds.night.s,0,0,backgrounds.night.s.width/backgrounds.night.r,backgrounds.night.s.height/backgrounds.night.r)
         ctx.drawImage(backgrounds.roads_precise.s,0,0,backgrounds.roads_precise.s.width/backgrounds.roads_precise.r,backgrounds.roads_precise.s.height/backgrounds.roads_precise.r)
+
+
+        // draw gps
+        ctx.save()
+        ctx.beginPath()
+        const p = getCarrierPosition( carrier, marge, margeBezier )
+        ctx.moveTo( p.x, p.y )
+
+        const path = [ carrier.position.arc.node_a , carrier.position.arc.node_b, ...carrier.decision.path ]
+
+        path
+            .forEach( (_,i,arr) => {
+
+                if ( !arr[i-1] || !arr[i+1] )
+                    return
+
+                const { A,C,B } = exchangeCurve( marge, margeBezier, arr[i-1], arr[i], arr[i+1] )
+
+                if ( i == 1 && (1-carrier.position.k) * carrier.position.arc.length < margeBezier )
+                    ctx.quadraticCurveTo( C.x, C.y, B.x, B.y )
+
+                else {
+                    ctx.lineTo( A.x, A.y )
+                    ctx.quadraticCurveTo( C.x, C.y, B.x, B.y )
+                }
+
+            })
+
+        ctx.lineTo( path[path.length-1].x, path[path.length-1].y )
+
+        ctx.lineCap     = 'round'
+        ctx.lineJoin    = 'round'
+        ctx.globalCompositeOperation = 'lighten'
+        ctx.strokeStyle = color( carrier )
+        ctx.globalAlpha = 0.5
+        ctx.lineWidth   = 2
+        ctx.stroke()
+        ctx.restore()
 
 
         // draw carrier
