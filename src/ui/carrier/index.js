@@ -60,6 +60,8 @@ module.exports = ( width, height, carriers ) => {
             ctx.fillStyle = color( carrier )
             ctx.arc( p.x, p.y, 2, 0, Math.PI*2 )
             ctx.fill()
+            ctx.font = '10px serif'
+            ctx.fillText(carrier.index, p.x, p.y-3)
 
         })
 

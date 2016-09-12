@@ -1,14 +1,14 @@
-import {getCarrierAheadCarrier} from 'core/util/ahead'
+import {getCarrierAheadCarrier} from 'core/util/aheadDeadlockSensitive'
 
 
 const computeAcceleration = ( carriers, me ) => {
 
-    const {distance} = getCarrierAheadCarrier( carriers, me ) || { distance: Infinity }
+    const { distance } = getCarrierAheadCarrier( carriers, me ) || { distance: Infinity }
 
-    if ( distance > 36 )
+    if ( distance > 26 )
         return me.info.maxAcc
 
-    else if ( distance < 25 )
+    else if ( distance < 19 )
         return -me.info.maxBrake
 
     else

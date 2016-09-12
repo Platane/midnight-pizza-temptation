@@ -44,11 +44,11 @@ const info = {
 }
 
 
-const carriers = Array.from({ length: 16 })
+const carriers = Array.from({ length: 26 })
     .map((_,i) =>
         ({
             position : {
-                arc         : network.endPoints[ i % network.endPoints.length ].node.arcs_entering[0],
+                arc         : network.endPoints[ 0 ].node.arcs_entering[0],
                 k           : 0.5,
                 velocity    : 0,
             },

@@ -1,6 +1,6 @@
 
 
-import {getCarrierAheadCarrier}         from 'core/util/ahead'
+import {getCarrierAheadCarrier}         from 'core/util/aheadDeadlockSensitive'
 import {build}                          from 'math/graph/build'
 import {createExchange}                 from 'ui/exchange'
 import expect                           from 'expect'
@@ -120,12 +120,6 @@ describe('ahead', function(){
 
         const { arcs, nodes } = this.network
 
-        const e0 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 0 )
-        const e1 = nodes[ 3 ].exchanges.find( x => x.arc_a.node_a.index == 1 )
-
-        e0.pass     = [ e1 ]
-        e1.block    = [ e0 ]
-
         const carriers = [
             {
                 position    : { arc     : arcs.find( arc => arc.node_a.index == 0 ), k : 0.95 },
@@ -139,9 +133,13 @@ describe('ahead', function(){
             },
         ]
 
-        const res = getCarrierAheadCarrier( carriers, carriers[0] )
+        this.exchanges = nodes[3].exchanges
 
-        expect( res && res.carrier ).toBe( carriers[1] )
+        expect( getCarrierAheadCarrier( carriers, carriers[0] ) ).toNotExist( )
+
+        const res = getCarrierAheadCarrier( carriers, carriers[1] )
+        expect( res && res.carrier ).toBe( carriers[0] )
+
     })
 
 
@@ -229,6 +227,36 @@ describe('ahead', function(){
 
         expect( getCarrierAheadCarrier( carriers, carriers[0] ) ).toNotExist( )
         expect( getCarrierAheadCarrier( carriers, carriers[1] ) ).toNotExist( )
+
+    })
+
+    it('deadlock', function(){
+
+        const { arcs, nodes } = this.network = build([
+            { x:0   , y:0 , links: [1,2,3] },
+            ...Array.from({ length: 3 })
+                .map( (_,i,arr) =>
+                    ({
+                        x : Math.sin( i/arr.length*Math.PI*2 )*20,
+                        y : Math.cos( i/arr.length*Math.PI*2 )*20,
+                        links: [0],
+                    })
+                )
+        ])
+
+        const carriers = Array.from({ length: 3 })
+            .map( (_,i) =>
+                ({
+                    index:i,
+                    position    : { arc     : arcs.find( arc => arc.node_a.index == i+1 && arc.node_b.index == 0 ), k : 0.6 },
+                    decision    : { path    : [ nodes[((i+2)%3)+1] ] },
+                })
+            )
+        this.exchanges = nodes[0].exchanges
+
+        expect( getCarrierAheadCarrier( carriers, carriers[0] ) ).toNotExist( )
+        expect( getCarrierAheadCarrier( carriers, carriers[1] ) ).toExist( )
+        expect( getCarrierAheadCarrier( carriers, carriers[2] ) ).toExist( )
 
     })
 })
