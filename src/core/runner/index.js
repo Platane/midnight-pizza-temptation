@@ -1,6 +1,7 @@
 
-import { computeAcceleration }  from 'core/decision/acceleration'
-import { choseNewRoute }        from 'core/decision/route'
+import { computeAcceleration }          from 'core/decision/acceleration'
+import { choseNewRoute }                from 'core/decision/route'
+import { getCarrierAheadCarrier }       from 'core/util/aheadDeadlockSensitive'
 
 const step = ( network, carriers, players ) =>
 
@@ -8,12 +9,17 @@ const step = ( network, carriers, players ) =>
     carriers
         .forEach( carrier => {
 
+
+
             if ( carrier.game.waitAfterScore > 0 ){
 
                 carrier.game.waitAfterScore --
 
                 return
             }
+
+            if ( carrier.game.dead > 0 )
+                return
 
             // change arc at the end of the arc
             if ( carrier.position.k >=1 ) {
@@ -47,6 +53,16 @@ const step = ( network, carriers, players ) =>
 
             // move the carrier
             carrier.position.k += carrier.position.velocity / carrier.position.arc.length
+
+            // check for collision
+            if ( carrier.control ){
+                const ahead = getCarrierAheadCarrier( carriers, carrier )
+                if ( ahead && ahead.distance < 4 ) {
+                    // collision
+                    ahead.carrier.game.dead = carrier.game.dead = true
+                }
+            }
+
         })
 
 

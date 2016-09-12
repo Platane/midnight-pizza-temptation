@@ -2,14 +2,14 @@ require('file?name=index.html!./index.html')
 
 
 // const seed = Math.random()
-const seed = 0.6440666625006068
-const l = 2<<29
-let r = 0|(seed * l)
-console.log( seed )
-Math.random = () => {
-    r = 0|Math.abs( +( l + seed + r*r ).toString().slice( 2, -2 ) % l )
-    return r / l
-}
+// const seed = 0.6440666625006068
+// const l = 2<<29
+// let r = 0|(seed * l)
+// console.log( seed )
+// Math.random = () => {
+//     r = 0|Math.abs( +( l + seed + r*r ).toString().slice( 2, -2 ) % l )
+//     return r / l
+// }
 
 
 
@@ -19,16 +19,16 @@ const dom_map = document.getElementById('map')
 
 const x = document.getElementById('map_').getBoundingClientRect()
 
-const width     = 0|Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 1000 )
+const width     = 0|Math.min(Math.max( 400, Math.min( x.width, x.height ) - 40 ), 800 )
 const height    = width
 
 const { perlin, vertices, network, faces, max_weight } = generateNetwork({
     width,
     height,
     perlin_size     : 350,
-    n_points        : 180,
-    n_sinks         : 5,
-    min_length      : 6,
+    n_points        : 280,
+    n_sinks         : 15,
+    min_length      : 10,
 })
 
 
@@ -39,16 +39,16 @@ import { step }             from 'core/runner'
 
 const info = {
     maxAcc      : 0.05,         // px . frame^-2
-    maxBrake    : 0.14,         // px . frame^-2
+    maxBrake    : 0.16,         // px . frame^-2
     maxVelocity : 3,            // px . frame^-1
 }
 
 
-const carriers = Array.from({ length: 26 })
+const carriers = Array.from({ length: 46 })
     .map((_,i) =>
         ({
             position : {
-                arc         : network.endPoints[ 0 ].node.arcs_entering[0],
+                arc         : network.endPoints[ Math.floor( Math.random() * network.endPoints.length ) ].node.arcs_entering[0],
                 k           : 0.5,
                 velocity    : 0,
             },
@@ -66,7 +66,7 @@ require('core/player')( carriers )
 import createPlayerDeck     from 'ui/playerDeck'
 import createCamList        from 'ui/closeCam/list'
 
-const max_zoom = 3.5
+const max_zoom = 1
 
 const backgrounds = {
 
@@ -103,8 +103,6 @@ document.getElementById('playerDeck').appendChild( playerDeck.dom )
 const camList    = createCamList( carriers, network, backgrounds, 0.6, 1.5 )
 document.getElementById('camlist').appendChild( camList.dom )
 
-import {createExchange}                 from 'ui/exchange'
-
 
 // network.nodes
 //     .every( node => {
@@ -118,8 +116,6 @@ import {createExchange}                 from 'ui/exchange'
 //     })
 
 
-let u
-
 const loop = () => {
 
     backgrounds.night.u()
@@ -132,19 +128,6 @@ const loop = () => {
 
     playerDeck.update()
     camList.update()
-
-
-    const k = carriers[0].position.arc.node_b.exchanges
-
-    if ( u != k && k.length ){
-
-        const ex = document.getElementById('exchange')
-
-        while( ex.children[0] )
-            ex.removeChild( ex.children[0] )
-
-        ex.appendChild( createExchange( u=k ) )
-    }
 
     requestAnimationFrame( loop )
 }

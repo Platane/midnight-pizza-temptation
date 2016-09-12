@@ -60,8 +60,23 @@ module.exports = ( width, height, carriers ) => {
             ctx.fillStyle = color( carrier )
             ctx.arc( p.x, p.y, 2, 0, Math.PI*2 )
             ctx.fill()
-            ctx.font = '10px serif'
-            ctx.fillText(carrier.index, p.x, p.y-3)
+
+            if ( carrier.game.dead && carrier.control ) {
+
+                ctx.strokeStyle = color( carrier )
+                ctx.lineWidth = 5
+                ctx.beginPath()
+                ctx.moveTo( p.x -10, p.y -10 )
+                ctx.lineTo( p.x +10, p.y +10 )
+                ctx.stroke()
+                ctx.beginPath()
+                ctx.moveTo( p.x -10, p.y +10 )
+                ctx.lineTo( p.x +10, p.y -10 )
+                ctx.stroke()
+
+            }
+
+
 
         })
 
