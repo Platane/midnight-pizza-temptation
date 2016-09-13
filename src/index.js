@@ -84,7 +84,6 @@ const { update: update_carrier, canvas:carrier_canvas }     = paintCarrier( widt
 backgrounds.night.s.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
 backgrounds.night.d.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
 backgrounds.roads_large.s.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
-backgrounds.roads_large.d.setAttribute('style',`position:absolute;width:${ width }px;height:${ height }px`)
 carrier_canvas.setAttribute('style',`position:relative;width:${ width }px;height:${ height }px`)
 
 while( dom_map.children[0] )
@@ -93,7 +92,6 @@ while( dom_map.children[0] )
 dom_map.appendChild( backgrounds.night.s )
 dom_map.appendChild( backgrounds.night.d )
 dom_map.appendChild( backgrounds.roads_large.s )
-dom_map.appendChild( backgrounds.roads_large.d )
 dom_map.appendChild( carrier_canvas )
 
 
@@ -122,7 +120,6 @@ const loop = () => {
 
     backgrounds.night.u()
     backgrounds.roads_large.u()
-    backgrounds.roads_precise.u()
 
     backgrounds.night.s.style.transform = `translate3d(${screenShake.h(6)}px,${screenShake.h(10)}px,0)`
     backgrounds.night.d.style.transform = `translate3d(${screenShake.h(8)}px,${screenShake.h(7)}px,0)`

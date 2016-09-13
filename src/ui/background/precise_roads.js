@@ -10,15 +10,13 @@ const color_road            = '#4bc2bb'
 module.exports = ( width, height, resolution, network, max_weight, marge, margeBezier ) => {
 
     const static_canvas   = create( null, 'canvas' )
-    const dynamic_canvas  = create( null, 'canvas' )
-    dynamic_canvas.width  = static_canvas.width  = width  * resolution
-    dynamic_canvas.height = static_canvas.height = height * resolution
+    static_canvas.width  = width  * resolution
+    static_canvas.height = height * resolution
 
     const static_ctx = static_canvas.getContext('2d')
     static_ctx.save()
     static_ctx.scale( resolution, resolution )
 
-    const dynamic_ctx = dynamic_canvas.getContext('2d')
 
 
 
@@ -93,46 +91,13 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
     static_ctx.restore()
 
     static_ctx.restore()
-    dynamic_ctx.restore()
 
 
-
-
-    const update = () => {
-
-        // // particule
-        // dynamic_ctx.save()
-        // dynamic_ctx.scale( resolution, resolution )
-        // dynamic_ctx.fillStyle    = color_road
-        // dynamic_ctx.globalAlpha  = 0.2
-        // network.endPoints.forEach( ({ node }) => {
-        //     dynamic_ctx.beginPath()
-        //     dynamic_ctx.arc( node.x, node.y, 9, 0 , Math.PI*2 )
-        //     dynamic_ctx.fill()
-        //     dynamic_ctx.beginPath()
-        //     dynamic_ctx.arc( node.x, node.y, 7, 0 , Math.PI*2 )
-        //     dynamic_ctx.fill()
-        // })
-        // dynamic_ctx.globalAlpha  = 1
-        // dynamic_ctx.fillStyle    = '#fff'
-        // dynamic_ctx.strokeStyle  = '#555'
-        // dynamic_ctx.lineWidth    = 2
-        // network.endPoints.forEach( ({ node }) => {
-        //     dynamic_ctx.beginPath()
-        //     dynamic_ctx.arc( node.x, node.y, 4, 0 , Math.PI*2 )
-        //     dynamic_ctx.fill()
-        //     dynamic_ctx.stroke()
-        // })
-        // dynamic_ctx.restore    = 2
-
-    }
 
     return {
         width,
         height,
         r:resolution,
         s: static_canvas,
-        d: dynamic_canvas,
-        u: update,
     }
 }
