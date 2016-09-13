@@ -12,6 +12,9 @@
     margin-right: 10px;
     flex-shrink: 0;
 }
+.score{
+    flex-shrink: 0;
+}
 .touchDown,
 .touch{
     width: 30px;
