@@ -26,8 +26,8 @@ const { perlin, vertices, network, faces, max_weight } = generateNetwork({
     width,
     height,
     perlin_size     : 350,
-    n_points        : 280,
-    n_sinks         : 15,
+    n_points        : 260,
+    n_sinks         : 16,
     min_length      : 10,
 })
 

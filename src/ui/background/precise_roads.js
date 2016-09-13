@@ -98,8 +98,6 @@ module.exports = ( width, height, resolution, network, max_weight, marge, margeB
 
 
 
-    const particules = []
-
     const update = () => {
 
         // // particule

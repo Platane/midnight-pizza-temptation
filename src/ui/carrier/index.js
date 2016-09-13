@@ -2,6 +2,7 @@
 import color                    from 'ui/color'
 import {getCarrierPosition}     from 'ui/projection'
 import createSplosion           from './pizzaSplosion'
+import point                    from 'math/point'
 
 
 const marge = 0
@@ -18,6 +19,27 @@ module.exports = ( width, height, carriers ) => {
     const ctx = canvas.getContext('2d')
 
     const pizzas = []
+    const particules = []
+
+    const createParticule = ( p, carrier ) => {
+
+        const n = point.sub( carrier.position.arc.node_b, carrier.position.arc.node_a )
+        const l = 5 * ( Math.random() > 0.5 ? 1 : -1 ) * ( Math.random() + 1 ) / point.length( n )
+
+
+        return {
+            ...p,
+            c : color( carrier ),
+            l : Math.floor( Math.random() + 1 )*50,
+            t : 0,
+            v : {
+                x: -n.y * l + Math.random() * 2,
+                y:  n.x * l,
+            },
+            s : ( Math.random() + 1 )*0.5,
+            o : Math.random()*0.3 + 0.3
+        }
+    }
 
     const update = () => {
         ctx.clearRect(0,0,width,height)
@@ -56,9 +78,12 @@ module.exports = ( width, height, carriers ) => {
 
             const p = getCarrierPosition( carrier, marge, 2 )
 
+            if ( carrier.position.velocity > 0.5 && Math.random() > 0.9 )
+                particules.push(createParticule( p, carrier ))
+
             ctx.beginPath()
             ctx.fillStyle = color( carrier )
-            ctx.arc( p.x, p.y, 2, 0, Math.PI*2 )
+            ctx.arc( p.x, p.y, 2.5, 0, Math.PI*2 )
             ctx.fill()
 
             if ( carrier.game.dead && carrier.control ) {
@@ -75,10 +100,29 @@ module.exports = ( width, height, carriers ) => {
                 ctx.stroke()
 
             }
-
-
-
         })
+
+        // draw particules
+        for( let i=particules.length; i--; )
+        {
+            particules[i].t ++
+
+            const {x,y,v,t,l,s,c,o} = particules[i]
+
+            if ( t > l )
+                particules.splice(i,1)
+
+            const k = t/l
+
+            ctx.save()
+            ctx.beginPath()
+            ctx.arc( x + v.x * k, y + v.y * k, ( 1+ Math.abs( 0.2 - k ) ) * s , 0, Math.PI*2 )
+            ctx.fillStyle = c
+
+            ctx.globalAlpha = Math.max( 0, 1 - ( k - 0.5 ) * 2 ) * o
+            ctx.fill()
+            ctx.restore()
+        }
 
         // draw pizza explosion
         carriers
