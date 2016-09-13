@@ -1,4 +1,4 @@
-
+import point                    from 'math/point'
 import paintPerlin              from 'ui/perlin'
 import {create}                 from 'ui/dom'
 
@@ -66,7 +66,63 @@ module.exports = ( width, height, resolution, faces, vertices, perlin ) => {
     static_ctx.restore()
     dynamic_ctx.restore()
 
-    const update = () => 0
+
+
+    const particules = []
+
+    const createParticule = () => {
+        const f = faces[ Math.floor( Math.random() * faces.length ) ]
+        const i = Math.floor( Math.random() * f.length )
+
+        const a = vertices[f[i]]
+        const b = vertices[f[(i+1)%f.length]]
+
+        const n = point.sub( b, a )
+        const l = 5 * ( Math.random() > 0.5 ? 1 : -1 ) * ( Math.random() + 2 ) / point.length( n )
+
+        return {
+            ...point.lerp( vertices[f[i]], vertices[f[(i+1)%f.length]], Math.random() ),
+            v : {
+                x: -n.y * l + Math.random() * 3,
+                y:  n.x * l,
+            },
+            l : Math.floor( Math.random() + 1 )*40,
+            t : 0,
+            s : ( Math.random() + 1 )*0.9,
+        }
+    }
+    const update = () => {
+
+        dynamic_ctx.clearRect(0, 0, width*resolution, height*resolution )
+        dynamic_ctx.save()
+        dynamic_ctx.scale( resolution, resolution )
+        static_ctx.globalCompositeOperation = 'lighten'
+        dynamic_ctx.fillStyle = '#4bc2bb'
+
+        for( let k=6;k--;)
+            particules.push(createParticule())
+
+        for( let i=particules.length; i--; )
+        {
+            particules[i].t ++
+
+            const {x,y,v,t,l,s} = particules[i]
+
+            if ( t > l )
+                particules.splice(i,1)
+
+            const k = t/l
+
+            dynamic_ctx.beginPath()
+            dynamic_ctx.arc( x + v.x * k, y + v.y * k, ( 1+ Math.abs( 0.2 - k ) ) * s , 0, Math.PI*2 )
+
+            dynamic_ctx.globalAlpha =  Math.abs( 0.5 - k * 0.4 ) * 0.4
+            dynamic_ctx.fill()
+        }
+
+
+        dynamic_ctx.restore()
+    }
 
     return {
         width,

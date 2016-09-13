@@ -7,6 +7,3 @@ const color = carrier =>
 
 
 module.exports = color
-
-
-const background = '#060a32'

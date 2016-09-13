@@ -75,6 +75,7 @@ module.exports = ( width, height, carriers, network, backgrounds, marge, margeBe
         ctx.scale( o.z, o.z )
 
         ctx.drawImage(backgrounds.night.s,0,0,backgrounds.night.s.width/backgrounds.night.r,backgrounds.night.s.height/backgrounds.night.r)
+        ctx.drawImage(backgrounds.night.d,0,0,backgrounds.night.d.width/backgrounds.night.r,backgrounds.night.d.height/backgrounds.night.r)
         ctx.drawImage(backgrounds.roads_precise.s,0,0,backgrounds.roads_precise.s.width/backgrounds.roads_precise.r,backgrounds.roads_precise.s.height/backgrounds.roads_precise.r)
 
 
