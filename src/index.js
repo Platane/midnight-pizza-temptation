@@ -72,7 +72,7 @@ const margeBezierge = 4.5
 
 const backgrounds = {
 
-    night           : require('ui/background/night')( width, height, max_zoom/1.5, faces, vertices, perlin ),
+    night           : require('ui/background/night')( width, height, max_zoom/2, faces, vertices, perlin ),
 
     roads_large     : require('ui/background/roads')( width, height, 1, network, max_weight, 0, 1.5 ),
 
@@ -105,7 +105,7 @@ document.getElementById('playerDeck').appendChild( playerDeck.dom )
 const camList    = createCamList( carriers, network, backgrounds, marge, margeBezierge )
 document.getElementById('camlist').appendChild( camList.dom )
 
-
+const screenShake = require('ui/screenShake')
 // network.nodes
 //     .every( node => {
 //         if ( node.arcs_entering.length == 0 && node.arcs_leaving.length == 0 )
@@ -124,10 +124,15 @@ const loop = () => {
     backgrounds.roads_large.u()
     backgrounds.roads_precise.u()
 
+    backgrounds.roads_large.s.style.transform = `translate3d(${screenShake.h(1).x}px,${screenShake.h(2).y}px,0)`
+    backgrounds.roads_large.d.style.transform = `translate3d(${screenShake.h(1).x}px,${screenShake.h(2).y}px,0)`
+    carrier_canvas.style.transform = `translate3d(${screenShake.h(3).x}px,${screenShake.h(4).y}px,0)`
+
     step( network, carriers )
 
     update_carrier()
 
+    screenShake.update()
     playerDeck.update()
     camList.update()
 
