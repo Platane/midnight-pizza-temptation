@@ -124,9 +124,11 @@ const loop = () => {
     backgrounds.roads_large.u()
     backgrounds.roads_precise.u()
 
-    backgrounds.roads_large.s.style.transform = `translate3d(${screenShake.h(1).x}px,${screenShake.h(2).y}px,0)`
-    backgrounds.roads_large.d.style.transform = `translate3d(${screenShake.h(1).x}px,${screenShake.h(2).y}px,0)`
-    carrier_canvas.style.transform = `translate3d(${screenShake.h(3).x}px,${screenShake.h(4).y}px,0)`
+    backgrounds.night.s.style.transform = `translate3d(${screenShake.h(6)}px,${screenShake.h(10)}px,0)`
+    backgrounds.night.d.style.transform = `translate3d(${screenShake.h(8)}px,${screenShake.h(7)}px,0)`
+    backgrounds.roads_large.s.style.transform = `translate3d(${screenShake.h(1)}px,${screenShake.h(2)}px,0)`
+    backgrounds.roads_large.d.style.transform = `translate3d(${screenShake.h(1)}px,${screenShake.h(2)}px,0)`
+    carrier_canvas.style.transform = `translate3d(${screenShake.h(3)}px,${screenShake.h(4)}px,0)`
 
     step( network, carriers )
 

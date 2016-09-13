@@ -2,7 +2,6 @@
 import { computeAcceleration }          from 'core/decision/acceleration'
 import { choseNewRoute }                from 'core/decision/route'
 import { getCarrierAheadCarrier }       from 'core/util/aheadDeadlockSensitive'
-const shake = require('ui/screenShake').shake
 
 const step = ( network, carriers, players ) =>
 
@@ -31,7 +30,6 @@ const step = ( network, carriers, players ) =>
                     if ( carrier.control ) {
                         carrier.game.score ++
                         carrier.game.waitAfterScore = 100
-                        shake()
                     }
 
                     carrier.decision.path = choseNewRoute( network, carrier )

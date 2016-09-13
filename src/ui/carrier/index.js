@@ -1,6 +1,7 @@
 
 import color                    from 'ui/color'
 import {getCarrierPosition}     from 'ui/projection'
+import {shake}                  from 'ui/screenShake'
 import createSplosion           from './pizzaSplosion'
 import point                    from 'math/point'
 
@@ -40,6 +41,17 @@ module.exports = ( width, height, carriers ) => {
             o : Math.random()*0.3 + 0.3
         }
     }
+
+    window.addEventListener('click', e => {
+        if ( !e.ctrlKey )
+            return
+        shake()
+        const u = {
+            x : e.pageX - canvas.getBoundingClientRect().left,
+            y : e.pageY - canvas.getBoundingClientRect().top,
+        }
+        pizzas.push( createSplosion( ctx, u, '#aaa' ) )
+    })
 
     const update = () => {
         ctx.clearRect(0,0,width,height)
@@ -127,9 +139,10 @@ module.exports = ( width, height, carriers ) => {
         // draw pizza explosion
         carriers
             .filter( carrier => carrier.game.waitAfterScore == 100 )
-            .forEach( carrier =>
+            .forEach( carrier => {
+                shake()
                 pizzas.push( createSplosion( ctx, carrier.position.arc.node_a, color( carrier )  ) )
-            )
+            })
 
         for(let i=pizzas.length;i--;)
             if( pizzas[i]() )

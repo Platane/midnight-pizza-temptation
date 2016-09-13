@@ -1,4 +1,4 @@
-import pizzaPool    from 'ui/pizza/pool'
+import pizzaPool    from 'ui/pizza/pool_s'
 import point        from 'math/point'
 
 const hop = ( t, n=3 ) =>
@@ -14,7 +14,7 @@ module.exports = ( ctx, o, blast_color ) => {
                 l : (0.5+Math.random())*50,
                 c : pizzaPool[ Math.floor( Math.random() * pizzaPool.length ) ],
                 v : point.normalize({ x:Math.random()-0.5, y:Math.random()-0.5 }),
-                s : (1+Math.random())* 0.07,
+                s : (1+Math.random())* 0.23,
                 n : 1+Math.ceil( Math.random() * 1.5 ),
                 e : 1 + Math.random() * 0.2
             })
@@ -47,7 +47,7 @@ module.exports = ( ctx, o, blast_color ) => {
             ctx.fillStyle = 'rgba(0,0,0,0.2)'
             ctx.globalAlpha = Math.max( 0, 1 - (t * x.e -0.8)*5 )
             ctx.beginPath()
-            ctx.arc(o.x +   x.v.x * x.l * sqrt_t, o.y +   x.v.y * x.l * sqrt_t, x.s*60, 0, Math.PI*2)
+            ctx.arc(o.x +   x.v.x * x.l * sqrt_t, o.y +   x.v.y * x.l * sqrt_t, x.s*20, 0, Math.PI*2)
             ctx.fill()
             ctx.restore()
 
@@ -68,7 +68,7 @@ module.exports = ( ctx, o, blast_color ) => {
             )
             ctx.scale( s,s )
             ctx.rotate( x.r )
-            ctx.translate( -75, -75 )
+            ctx.translate( -20, -20 )
             ctx.drawImage( x.c, 0, 0 )
             ctx.restore()
 
