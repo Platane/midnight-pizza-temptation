@@ -29,14 +29,14 @@ I wanted to explore city-like procerualy generated map and traffic jam logic. So
 
 <img title="map" src="https://github.com/Platane/midnight-pizza-temptation/blob/master/screenshot/map.png?raw=true" width="200">
 
-The map generation follow this steps:
-- pick N point in a non uniform, perlin noise based repartition
-- generate a first graph from the voronoi tesselation of the N points
+The map generation follows this steps:
+- pick N points in a non uniform, perlin noise based repartition.
+- generate a first graph from the voronoi tesselation of the N points.
 - use A* algorithm with non-optimal heuristic to link end points to each others, keep only the arcs found as solutions.
 
-## navigation IA
+## navigation AI
 
-The carrier determine the path to follow with a simple A* algorithm.
+The carriers determine the path to follow with a simple A* algorithm.
 
 They accelerate when the distance with the carrier ahead is short enought, brake otherwise.
 
@@ -46,7 +46,7 @@ This is achieve by precomputing for each intersection all the combinaison ( inco
 
 <img title="road intersection priority" src="https://github.com/Platane/midnight-pizza-temptation/blob/master/screenshot/exchange.jpg?raw=true" width="200">
 
-The algorithm also does check to prevent deadlock.
+The algorithm also does checks to prevent deadlock.
 
 ## rendering
 
@@ -54,11 +54,11 @@ I did a procedural pizza generator!
 
 <img title="pizza sample" src="https://github.com/Platane/midnight-pizza-temptation/blob/master/screenshot/pizza.png?raw=true" width="200">
 
-The ui was quite simple, until I added paricules effect everywhere and screen shake !
+The ui was quite simple, until I added paricule effects everywhere and screen shake !
 
 ## tooling
 
-I set up some useful automated process.
+I set up some useful automated processes.
 
 There is some unit tests running at each commit on [wercker](http://wercker.com/). If they passed, the index.html built and the zip file are push to gh-pages.
 
@@ -68,6 +68,6 @@ This is quite cool since I actually never run the build myself. I just checked t
 
 I actually did not consider the size limit very much. The fact that the result is ziped makes the space saved for one trick difficult to predict.
 
-And before zip the source minified source is ~45Ko which is HUGE. I did not restrain my self to waste space to increase readability ( webpack usage, long named object properties ... ). Also I think there is still deadcode in the built output.
+In addition, before zip the minified source is ~45Ko which is HUGE. I did not restrain my self to waste space to increase readability ( webpack usage, long named object properties ... ).
 
 <img title="size evolution" src="https://github.com/Platane/midnight-pizza-temptation/blob/master/screenshot/size.jpg?raw=true" height="200">
